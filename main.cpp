@@ -1,25 +1,42 @@
 ﻿#include <windows.h>
+#include <commctrl.h>
 #include <commdlg.h>
+#include <string>
 
 #define ID_FILE_SAVE 1001
 #define ID_FILE_EXIT 1002
 #define ID_FILE_OPEN 1003
 #define ID_TOGGLE_SUBSTITUTION 1004
+#define ID_CODE_ENCODE 1005
+#define ID_CODE_DECODE 1006
+#define ID_STATUSBAR 1007
 
 #pragma comment(lib, "user32.lib")
-#pragma comment(lib, "gdi32.lib")
-#pragma comment(lib, "comdlg32.lib")
-
+#pragma comment(lib, "comctl32.lib")
 #pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:wWinMainCRTStartup")
 
 const wchar_t CLASS_NAME[] = L"Correspondence";
 const wchar_t WINDOW_TITLE[] = L"Correspondence";
 
 HWND hEdit;
+HWND hStatusBar;
 WNDPROC OldEditProc;
 HFONT hFont;
 OPENFILENAME ofn;
 bool enableSubstitution = true;
+
+void SaveFile(HWND hwnd);
+void OpenFile(HWND hwnd);
+void EncodeText();
+void DecodeText();
+
+void UpdateStatusBar() {
+    int index = 0;
+    const int bufferSize = 256;
+    wchar_t statusText[bufferSize];
+    swprintf_s(statusText, bufferSize, L"Code %s", enableSubstitution ? L"Enabled" : L"Disabled");
+    SendMessage(hStatusBar, SB_SETTEXT, index, (LPARAM)statusText);
+}
 
 void SaveFile(HWND hwnd) {
     WCHAR szFileName[MAX_PATH] = L"";
@@ -108,6 +125,112 @@ void OpenFile(HWND hwnd) {
     }
 }
 
+void EncodeText() {
+    int len = GetWindowTextLength(hEdit);
+    if (len > 0) {
+        WCHAR* buffer = new WCHAR[len + 1];
+        GetWindowText(hEdit, buffer, len + 1);
+
+        for (int i = 0; i < len; ++i) {
+            WCHAR originalChar = buffer[i];
+            WCHAR newChar = originalChar; // Initialize with the original character
+
+            // Perform custom character substitution based on originalChar
+            switch (originalChar) {
+            case L'A': case L'a': newChar = L'☉'; break;
+            case L'B': case L'b': newChar = L'●'; break;
+            case L'C': case L'c': newChar = L'☾'; break;
+            case L'D': case L'd': newChar = L'☽'; break;
+            case L'E': case L'e': newChar = L'○'; break;
+            case L'F': case L'f': newChar = L'☿'; break;
+            case L'G': case L'g': newChar = L'♀'; break;
+            case L'H': case L'h': newChar = L'♁'; break;
+            case L'I': case L'i': newChar = L'♂'; break;
+            case L'J': case L'j': newChar = L'♃'; break;
+            case L'K': case L'k': newChar = L'♄'; break;
+            case L'L': case L'l': newChar = L'♅'; break;
+            case L'M': case L'm': newChar = L'♆'; break;
+            case L'N': case L'n': newChar = L'♇'; break;
+            case L'O': case L'o': newChar = L'♈'; break;
+            case L'P': case L'p': newChar = L'♉'; break;
+            case L'Q': case L'q': newChar = L'♊'; break;
+            case L'R': case L'r': newChar = L'♋'; break;
+            case L'S': case L's': newChar = L'♌'; break;
+            case L'T': case L't': newChar = L'♍'; break;
+            case L'U': case L'u': newChar = L'♎'; break;
+            case L'V': case L'v': newChar = L'♏'; break;
+            case L'W': case L'w': newChar = L'♐'; break;
+            case L'X': case L'x': newChar = L'♑'; break;
+            case L'Y': case L'y': newChar = L'♒'; break;
+            case L'Z': case L'z': newChar = L'♓'; break;
+            default: // If no substitution, keep the original character
+                newChar = originalChar;
+                break;
+            }
+
+            buffer[i] = newChar; // Replace the character in the buffer
+        }
+
+        SetWindowText(hEdit, buffer);
+        delete[] buffer;
+    }
+
+    UpdateStatusBar();
+}
+
+void DecodeText() {
+    int len = GetWindowTextLength(hEdit);
+    if (len > 0) {
+        WCHAR* buffer = new WCHAR[len + 1];
+        GetWindowText(hEdit, buffer, len + 1);
+
+        for (int i = 0; i < len; ++i) {
+            WCHAR originalChar = buffer[i];
+            WCHAR newChar = originalChar; // Initialize with the original character
+
+            // Perform custom character substitution based on originalChar
+            switch (originalChar) {
+            case L'☉': newChar = L'a'; break;
+            case L'●': newChar = L'b'; break;
+            case L'☾': newChar = L'c'; break;
+            case L'☽': newChar = L'd'; break;
+            case L'○': newChar = L'e'; break;
+            case L'☿': newChar = L'f'; break;
+            case L'♀': newChar = L'g'; break;
+            case L'♁': newChar = L'h'; break;
+            case L'♂': newChar = L'i'; break;
+            case L'♃': newChar = L'j'; break;
+            case L'♄': newChar = L'k'; break;
+            case L'♅': newChar = L'l'; break;
+            case L'♆': newChar = L'm'; break;
+            case L'♇': newChar = L'n'; break;
+            case L'♈': newChar = L'o'; break;
+            case L'♉': newChar = L'p'; break;
+            case L'♊': newChar = L'q'; break;
+            case L'♋': newChar = L'r'; break;
+            case L'♌': newChar = L's'; break;
+            case L'♍': newChar = L't'; break;
+            case L'♎': newChar = L'u'; break;
+            case L'♏': newChar = L'v'; break;
+            case L'♐': newChar = L'w'; break;
+            case L'♑': newChar = L'x'; break;
+            case L'♒': newChar = L'y'; break;
+            case L'♓': newChar = L'z'; break;
+            default: // If no substitution, keep the original character
+                newChar = originalChar;
+                break;
+            }
+
+            buffer[i] = newChar; // Replace the character in the buffer
+        }
+
+        SetWindowText(hEdit, buffer);
+        delete[] buffer;
+    }
+
+    UpdateStatusBar();
+}
+
 LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CHAR: {
@@ -148,6 +271,7 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
     return CallWindowProc(OldEditProc, hwnd, uMsg, wParam, lParam);
 }
 
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CREATE: {
@@ -169,12 +293,26 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
 
         OldEditProc = (WNDPROC)SetWindowLongPtr(hEdit, GWLP_WNDPROC, (LONG_PTR)EditSubclassProc);
+
+        // Create status bar
+        hStatusBar = CreateWindowExW(
+            0, STATUSCLASSNAME, NULL,
+            WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
+            0, 0, 0, 0,
+            hwnd, (HMENU)ID_STATUSBAR, GetModuleHandle(NULL), NULL);
+
+        // Set up the parts of the status bar
+        int statusParts[] = { 200, -1 }; // 200 for the status text, -1 for sizing grip
+        SendMessage(hStatusBar, SB_SETPARTS, sizeof(statusParts) / sizeof(int), (LPARAM)&statusParts);
+
+        UpdateStatusBar(); // Initialize status bar text
         break;
     }
     case WM_SIZE: {
         RECT rcClient;
         GetClientRect(hwnd, &rcClient);
-        SetWindowPos(hEdit, NULL, 0, 0, rcClient.right, rcClient.bottom, SWP_NOZORDER);
+        SetWindowPos(hEdit, NULL, 0, 0, rcClient.right, rcClient.bottom - 20, SWP_NOZORDER); // Adjust size for status bar
+        SetWindowPos(hStatusBar, NULL, 0, rcClient.bottom - 20, rcClient.right, 20, SWP_NOZORDER); // Position status bar
         break;
     }
     case WM_COMMAND: {
@@ -188,12 +326,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             break;
         case ID_TOGGLE_SUBSTITUTION:
             enableSubstitution = !enableSubstitution;
-            if (enableSubstitution) {
-                MessageBox(hwnd, L"Code enabled.", L"Correspondence", MB_OK | MB_ICONINFORMATION);
-            }
-            else {
-                MessageBox(hwnd, L"Code disabled.", L"Correspondence", MB_OK | MB_ICONINFORMATION);
-            }
+            UpdateStatusBar(); // Update status bar text            
+            break;
+        case ID_CODE_ENCODE:
+            EncodeText();
+            break;
+        case ID_CODE_DECODE:
+            DecodeText();
             break;
         case ID_FILE_EXIT:
             DestroyWindow(hwnd);
@@ -217,6 +356,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
+    INITCOMMONCONTROLSEX iccex;
+    iccex.dwSize = sizeof(iccex);
+    iccex.dwICC = ICC_WIN95_CLASSES; // or ICC_STANDARD_CLASSES
+    InitCommonControlsEx(&iccex);
+
     WNDCLASS wc = {};
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
@@ -235,14 +379,21 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     }
 
     HMENU hMenu = CreateMenu();
-    HMENU hSubMenu = CreatePopupMenu();
-    AppendMenu(hSubMenu, MF_STRING, ID_FILE_OPEN, L"&Open");
-    AppendMenu(hSubMenu, MF_STRING, ID_FILE_SAVE, L"&Save");
-    AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hSubMenu, MF_STRING, ID_TOGGLE_SUBSTITUTION, L"&Toggle Code");
-    AppendMenu(hSubMenu, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hSubMenu, MF_STRING, ID_FILE_EXIT, L"E&xit");
-    AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenu, L"&File");
+    HMENU hSubMenuFile = CreatePopupMenu();
+    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_OPEN, L"&Open");
+    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_SAVE, L"&Save");
+    AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hSubMenuFile, MF_STRING, ID_TOGGLE_SUBSTITUTION, L"&Toggle Code");
+    AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);
+    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_EXIT, L"E&xit");
+
+    HMENU hSubMenuCode = CreatePopupMenu();
+    AppendMenu(hSubMenuCode, MF_STRING, ID_CODE_ENCODE, L"&Encode");
+    AppendMenu(hSubMenuCode, MF_STRING, ID_CODE_DECODE, L"&Decode");
+
+    AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuFile, L"&File");
+    AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuCode, L"&Code");
+
     SetMenu(hwnd, hMenu);
 
     ShowWindow(hwnd, nCmdShow);
