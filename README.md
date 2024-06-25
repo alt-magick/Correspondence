@@ -3,7 +3,7 @@ The Magick Correspondence Text Editor
 
 Correspondence is a text editor that can toggle between code or normal text.
 The code is defined in the source code and uses this astrology cypher as default:
-It allows you to type in code and english, or encode/decode a text document.
+It lets you type in code or english, and encode / decode a text file.
 
 A / Sun: ☉<br>
 B / Full Moon: ●<br>
