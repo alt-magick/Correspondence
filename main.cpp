@@ -10,6 +10,18 @@
 #define ID_CODE_ENCODE 1005
 #define ID_CODE_DECODE 1006
 #define ID_STATUSBAR 1007
+#define ID_EDIT_CUT 1008
+#define ID_EDIT_COPY 1009
+#define ID_EDIT_PASTE 1010
+#define ID_CTRL_E_ENCODE 1011
+#define ID_CTRL_D_DECODE 1012
+#define ID_CTRL_X_CUT 1013
+#define ID_CTRL_C_COPY 1014
+#define ID_CTRL_V_PASTE 1015
+#define ID_CTRL_T 1016
+#define ID_CTRL_S 1016
+#define ID_CTRL_O 1016
+#define ID_CTRL_Q 1016
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "comctl32.lib")
@@ -23,7 +35,7 @@ HWND hStatusBar;
 WNDPROC OldEditProc;
 HFONT hFont;
 OPENFILENAME ofn;
-bool enableSubstitution = true;
+bool enableSubstitution = false;
 
 void SaveFile(HWND hwnd);
 void OpenFile(HWND hwnd);
@@ -133,9 +145,8 @@ void EncodeText() {
 
         for (int i = 0; i < len; ++i) {
             WCHAR originalChar = buffer[i];
-            WCHAR newChar = originalChar; // Initialize with the original character
+            WCHAR newChar = originalChar;
 
-            // Perform custom character substitution based on originalChar
             switch (originalChar) {
             case L'A': case L'a': newChar = L'☉'; break;
             case L'B': case L'b': newChar = L'●'; break;
@@ -163,12 +174,12 @@ void EncodeText() {
             case L'X': case L'x': newChar = L'♑'; break;
             case L'Y': case L'y': newChar = L'♒'; break;
             case L'Z': case L'z': newChar = L'♓'; break;
-            default: // If no substitution, keep the original character
+            default:
                 newChar = originalChar;
                 break;
             }
 
-            buffer[i] = newChar; // Replace the character in the buffer
+            buffer[i] = newChar; 
         }
 
         SetWindowText(hEdit, buffer);
@@ -186,9 +197,8 @@ void DecodeText() {
 
         for (int i = 0; i < len; ++i) {
             WCHAR originalChar = buffer[i];
-            WCHAR newChar = originalChar; // Initialize with the original character
+            WCHAR newChar = originalChar; 
 
-            // Perform custom character substitution based on originalChar
             switch (originalChar) {
             case L'☉': newChar = L'a'; break;
             case L'●': newChar = L'b'; break;
@@ -216,12 +226,12 @@ void DecodeText() {
             case L'♑': newChar = L'x'; break;
             case L'♒': newChar = L'y'; break;
             case L'♓': newChar = L'z'; break;
-            default: // If no substitution, keep the original character
+            default: 
                 newChar = originalChar;
                 break;
             }
 
-            buffer[i] = newChar; // Replace the character in the buffer
+            buffer[i] = newChar;
         }
 
         SetWindowText(hEdit, buffer);
@@ -267,6 +277,46 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
         break;
     }
+    case WM_KEYDOWN: {
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'E') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_E_ENCODE, 0), (LPARAM)hwnd);
+            return 0; 
+        }
+       
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'D') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_D_DECODE, 0), (LPARAM)hwnd);
+            return 0;
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'X') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_X_CUT, 0), (LPARAM)hwnd);
+            return 0; 
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'C') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_C_COPY, 0), (LPARAM)hwnd);
+            return 0; 
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'V') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_V_PASTE, 0), (LPARAM)hwnd);
+            return 0; 
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'T') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_T, 0), (LPARAM)hwnd);
+            return 0; 
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'S') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_SAVE, 0), (LPARAM)hwnd);
+            return 0; 
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'O') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_OPEN, 0), (LPARAM)hwnd);
+            return 0; 
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Q') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_EXIT, 0), (LPARAM)hwnd);
+            return 0; 
+        }
+        break;
+    }
     }
     return CallWindowProc(OldEditProc, hwnd, uMsg, wParam, lParam);
 }
@@ -294,25 +344,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
         OldEditProc = (WNDPROC)SetWindowLongPtr(hEdit, GWLP_WNDPROC, (LONG_PTR)EditSubclassProc);
 
-        // Create status bar
         hStatusBar = CreateWindowExW(
             0, STATUSCLASSNAME, NULL,
             WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
             0, 0, 0, 0,
             hwnd, (HMENU)ID_STATUSBAR, GetModuleHandle(NULL), NULL);
 
-        // Set up the parts of the status bar
-        int statusParts[] = { 200, -1 }; // 200 for the status text, -1 for sizing grip
+        int statusParts[] = { 200, -1 };
         SendMessage(hStatusBar, SB_SETPARTS, sizeof(statusParts) / sizeof(int), (LPARAM)&statusParts);
 
-        UpdateStatusBar(); // Initialize status bar text
+        UpdateStatusBar(); 
         break;
     }
     case WM_SIZE: {
         RECT rcClient;
         GetClientRect(hwnd, &rcClient);
-        SetWindowPos(hEdit, NULL, 0, 0, rcClient.right, rcClient.bottom - 20, SWP_NOZORDER); // Adjust size for status bar
-        SetWindowPos(hStatusBar, NULL, 0, rcClient.bottom - 20, rcClient.right, 20, SWP_NOZORDER); // Position status bar
+        SetWindowPos(hEdit, NULL, 0, 0, rcClient.right, rcClient.bottom - 20, SWP_NOZORDER); 
+        SetWindowPos(hStatusBar, NULL, 0, rcClient.bottom - 20, rcClient.right, 20, SWP_NOZORDER);
         break;
     }
     case WM_COMMAND: {
@@ -326,14 +374,297 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             break;
         case ID_TOGGLE_SUBSTITUTION:
             enableSubstitution = !enableSubstitution;
-            UpdateStatusBar(); // Update status bar text            
+            UpdateStatusBar();
             break;
         case ID_CODE_ENCODE:
-            EncodeText();
+            SendMessage(hEdit, WM_CUT, 0, 0);
+            if (OpenClipboard(hwnd)) {
+                HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
+                if (hClipboardData != NULL) {
+                    WCHAR* pszData = static_cast<WCHAR*>(GlobalLock(hClipboardData));
+                    if (pszData != NULL) {
+                       
+                        size_t length = wcslen(pszData);
+                        WCHAR* pszModifiedData = new WCHAR[length + 1];
+                        if (pszModifiedData != NULL) {
+                            for (size_t i = 0; i < length; ++i) {
+                                if (pszData[i] == L'a' || pszData[i] == L'A') {
+                                    pszModifiedData[i] = L'☉';
+                                }
+                                else if (pszData[i] == L'b' || pszData[i] == L'B') {
+                                    pszModifiedData[i] = L'●';
+                                }
+                                else if (pszData[i] == L'c' || pszData[i] == L'C') {
+                                    pszModifiedData[i] = L'☾';
+                                }
+                                else if (pszData[i] == L'd' || pszData[i] == L'D') {
+                                    pszModifiedData[i] = L'☽';
+                                }
+                                else if (pszData[i] == L'e' || pszData[i] == L'E') {
+                                    pszModifiedData[i] = L'○';
+                                }
+                                else if (pszData[i] == L'f' || pszData[i] == L'F') {
+                                    pszModifiedData[i] = L'☿';
+                                }
+                                else if (pszData[i] == L'g' || pszData[i] == L'G') {
+                                    pszModifiedData[i] = L'♀';
+                                }
+                                else if (pszData[i] == L'h' || pszData[i] == L'H') {
+                                    pszModifiedData[i] = L'♁';
+                                }
+                                else if (pszData[i] == L'i' || pszData[i] == L'I') {
+                                    pszModifiedData[i] = L'♂';
+                                }
+                                else if (pszData[i] == L'j' || pszData[i] == L'J') {
+                                    pszModifiedData[i] = L'♃';
+                                }
+                                else if (pszData[i] == L'k' || pszData[i] == L'K') {
+                                    pszModifiedData[i] = L'♄';
+                                }
+                                else if (pszData[i] == L'l' || pszData[i] == L'L') {
+                                    pszModifiedData[i] = L'♅';
+                                }
+                                else if (pszData[i] == L'm' || pszData[i] == L'M') {
+                                    pszModifiedData[i] = L'♆';
+                                }
+                                else if (pszData[i] == L'n' || pszData[i] == L'N') {
+                                    pszModifiedData[i] = L'♇';
+                                }
+                                else if (pszData[i] == L'o' || pszData[i] == L'O') {
+                                    pszModifiedData[i] = L'♈';
+                                }
+                                else if (pszData[i] == L'p' || pszData[i] == L'P') {
+                                    pszModifiedData[i] = L'♉';
+                                }
+                                else if (pszData[i] == L'q' || pszData[i] == L'Q') {
+                                    pszModifiedData[i] = L'♊';
+                                }
+                                else if (pszData[i] == L'r' || pszData[i] == L'R') {
+                                    pszModifiedData[i] = L'♋';
+                                }
+                                else if (pszData[i] == L's' || pszData[i] == L'S') {
+                                    pszModifiedData[i] = L'♌';
+                                }
+                                else if (pszData[i] == L't' || pszData[i] == L'T') {
+                                    pszModifiedData[i] = L'♍';
+                                }
+                                else if (pszData[i] == L'u' || pszData[i] == L'U') {
+                                    pszModifiedData[i] = L'♎';
+                                }
+                                else if (pszData[i] == L'v' || pszData[i] == L'V') {
+                                    pszModifiedData[i] = L'♏';
+                                }
+                                else if (pszData[i] == L'w' || pszData[i] == L'W') {
+                                    pszModifiedData[i] = L'♐';
+                                }
+                                else if (pszData[i] == L'x' || pszData[i] == L'X') {
+                                    pszModifiedData[i] = L'♑';
+                                }
+                                else if (pszData[i] == L'y' || pszData[i] == L'Y') {
+                                    pszModifiedData[i] = L'♒';
+                                }
+                                else if (pszData[i] == L'z' || pszData[i] == L'Z') {
+                                    pszModifiedData[i] = L'♓';
+                                }
+                                else {
+                                    pszModifiedData[i] = pszData[i];
+                                }
+                            }
+                            pszModifiedData[length] = L'\0';
+
+                           
+                            EmptyClipboard();
+
+                            
+                            HANDLE hNewData = GlobalAlloc(GMEM_MOVEABLE, (length + 1) * sizeof(WCHAR));
+                            if (hNewData != NULL) {
+                                WCHAR* pszNewData = static_cast<WCHAR*>(GlobalLock(hNewData));
+                                if (pszNewData != NULL) {
+                                    wcscpy_s(pszNewData, length + 1, pszModifiedData);
+                                    GlobalUnlock(hNewData);
+
+                                    
+                                    SetClipboardData(CF_UNICODETEXT, hNewData);
+                                }
+                                else {
+                                    GlobalFree(hNewData);
+                                }
+                            }
+
+                            delete[] pszModifiedData;
+                        }
+                        GlobalUnlock(hClipboardData);
+                    }
+                }
+
+                CloseClipboard();
+            }
+            SendMessage(hEdit, WM_PASTE, 0, 0);
             break;
+
         case ID_CODE_DECODE:
-            DecodeText();
+            SendMessage(hEdit, WM_CUT, 0, 0);
+            if (OpenClipboard(hwnd)) {
+                HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
+                if (hClipboardData != NULL) {
+                    WCHAR* pszData = static_cast<WCHAR*>(GlobalLock(hClipboardData));
+                    if (pszData != NULL) {
+                        
+                        size_t length = wcslen(pszData);
+                        WCHAR* pszModifiedData = new WCHAR[length + 1];
+                        if (pszModifiedData != NULL) {
+                            for (size_t i = 0; i < length; ++i) {
+                                if (pszData[i] == L'☉') {
+                                    pszModifiedData[i] = L'a';
+                                }
+                                else if (pszData[i] == L'●') {
+                                    pszModifiedData[i] = L'b';
+                                }
+                                else if (pszData[i] == L'☾') {
+                                    pszModifiedData[i] = L'c';
+                                }
+                                else if (pszData[i] == L'☽') {
+                                    pszModifiedData[i] = L'd';
+                                }
+                                else if (pszData[i] == L'○') {
+                                    pszModifiedData[i] = L'e';
+                                }
+                                else if (pszData[i] == L'☿') {
+                                    pszModifiedData[i] = L'f';
+                                }
+                                else if (pszData[i] == L'♀') {
+                                    pszModifiedData[i] = L'g';
+                                }
+                                else if (pszData[i] == L'♁') {
+                                    pszModifiedData[i] = L'h';
+                                }
+                                else if (pszData[i] == L'♂') {
+                                    pszModifiedData[i] = L'i';
+                                }
+                                else if (pszData[i] == L'♃') {
+                                    pszModifiedData[i] = L'j';
+                                }
+                                else if (pszData[i] == L'♄') {
+                                    pszModifiedData[i] = L'k';
+                                }
+                                else if (pszData[i] == L'♅') {
+                                    pszModifiedData[i] = L'l';
+                                }
+                                else if (pszData[i] == L'♆') {
+                                    pszModifiedData[i] = L'm';
+                                }
+                                else if (pszData[i] == L'♇') {
+                                    pszModifiedData[i] = L'n';
+                                }
+                                else if (pszData[i] == L'♈') {
+                                    pszModifiedData[i] = L'o';
+                                }
+                                else if (pszData[i] == L'♉') {
+                                    pszModifiedData[i] = L'p';
+                                }
+                                else if (pszData[i] == L'♊') {
+                                    pszModifiedData[i] = L'q';
+                                }
+                                else if (pszData[i] == L'♋') {
+                                    pszModifiedData[i] = L'r';
+                                }
+                                else if (pszData[i] == L'♌') {
+                                    pszModifiedData[i] = L's';
+                                }
+                                else if (pszData[i] == L'♍') {
+                                    pszModifiedData[i] = L't';
+                                }
+                                else if (pszData[i] == L'♎') {
+                                    pszModifiedData[i] = L'u';
+                                }
+                                else if (pszData[i] == L'♏') {
+                                    pszModifiedData[i] = L'v';
+                                }
+                                else if (pszData[i] == L'♐') {
+                                    pszModifiedData[i] = L'w';
+                                }
+                                else if (pszData[i] == L'♑') {
+                                    pszModifiedData[i] = L'x';
+                                }
+                                else if (pszData[i] == L'♒') {
+                                    pszModifiedData[i] = L'y';
+                                }
+                                else if (pszData[i] == L'♓') {
+                                    pszModifiedData[i] = L'z';
+                                }
+
+                                else {
+                                    pszModifiedData[i] = pszData[i];
+                                }
+                            }
+                            pszModifiedData[length] = L'\0'; 
+                           
+                            EmptyClipboard();
+
+                            HANDLE hNewData = GlobalAlloc(GMEM_MOVEABLE, (length + 1) * sizeof(WCHAR));
+                            if (hNewData != NULL) {
+                                WCHAR* pszNewData = static_cast<WCHAR*>(GlobalLock(hNewData));
+                                if (pszNewData != NULL) {
+                                    wcscpy_s(pszNewData, length + 1, pszModifiedData);
+                                    GlobalUnlock(hNewData);
+
+                                   
+                                    SetClipboardData(CF_UNICODETEXT, hNewData);
+                                }
+                                else {
+                                    GlobalFree(hNewData); 
+                                }
+                            }
+
+                            delete[] pszModifiedData;
+                        }
+                        GlobalUnlock(hClipboardData);
+                    }
+                }
+
+                CloseClipboard();
+            }
+            SendMessage(hEdit, WM_PASTE, 0, 0);
             break;
+
+        case ID_CTRL_X_CUT: {            
+            SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_EDIT_CUT, 0), 0);
+            break;
+        }
+        case ID_CTRL_C_COPY: {
+            SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_EDIT_COPY, 0), 0);
+            break;
+        }
+        case ID_CTRL_V_PASTE: {
+            SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_EDIT_PASTE, 0), 0);
+            break;
+        }
+        case ID_EDIT_CUT: {
+            SendMessage(hEdit, WM_CUT, 0, 0);
+            break;
+        }
+        case ID_EDIT_COPY: {
+            SendMessage(hEdit, WM_COPY, 0, 0);
+            break;
+        }
+        case ID_EDIT_PASTE: {
+            SendMessage(hEdit, WM_PASTE, 0, 0);
+            break;
+        }
+        case ID_CTRL_D_DECODE: {
+            SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_CODE_DECODE, 0), 0);
+            break;
+        }
+        case ID_CTRL_E_ENCODE: {
+            SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_CODE_ENCODE, 0), 0);
+            break;
+        }
+        case ID_CTRL_T: {
+            enableSubstitution = !enableSubstitution;
+            UpdateStatusBar(); 
+            break;
+        }
+
         case ID_FILE_EXIT:
             DestroyWindow(hwnd);
             break;
@@ -358,7 +689,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
     INITCOMMONCONTROLSEX iccex;
     iccex.dwSize = sizeof(iccex);
-    iccex.dwICC = ICC_WIN95_CLASSES; // or ICC_STANDARD_CLASSES
+    iccex.dwICC = ICC_WIN95_CLASSES; 
     InitCommonControlsEx(&iccex);
 
     WNDCLASS wc = {};
@@ -380,19 +711,26 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     HMENU hMenu = CreateMenu();
     HMENU hSubMenuFile = CreatePopupMenu();
-    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_OPEN, L"&Open");
-    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_SAVE, L"&Save");
+    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_OPEN, L"&Open  -  Ctrl + O");
+    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_SAVE, L"&Save  -  Ctrl + S");
+    AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);    
     AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hSubMenuFile, MF_STRING, ID_TOGGLE_SUBSTITUTION, L"&Toggle Code");
-    AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_EXIT, L"E&xit");
+    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_EXIT, L"E&xit  -  Ctrl + Q");
 
     HMENU hSubMenuCode = CreatePopupMenu();
-    AppendMenu(hSubMenuCode, MF_STRING, ID_CODE_ENCODE, L"&Encode");
-    AppendMenu(hSubMenuCode, MF_STRING, ID_CODE_DECODE, L"&Decode");
+    AppendMenu(hSubMenuCode, MF_STRING, ID_CODE_ENCODE, L"&Encode  -  Ctrl + E");
+    AppendMenu(hSubMenuCode, MF_STRING, ID_CODE_DECODE, L"&Decode  -  Ctrl + D");
+    AppendMenu(hSubMenuCode, MF_STRING, ID_TOGGLE_SUBSTITUTION, L"&Toggle  -  Ctrl + T");
+
+    HMENU hSubMenuEdit = CreatePopupMenu();
+    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_CUT, L"&Cut  -  Ctrl + X");
+    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_COPY, L"&Copy  -  Ctrl + C");
+    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_PASTE, L"&Paste - Ctrl + V");
 
     AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuFile, L"&File");
+    AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuEdit, L"&Edit");
     AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuCode, L"&Code");
+    
 
     SetMenu(hwnd, hMenu);
 
