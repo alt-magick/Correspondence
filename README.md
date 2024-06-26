@@ -1,8 +1,8 @@
 # Correspondence
 The Correspondence Text Editor
 
-Correspondence is a text editor that can toggle between code or normal text.<br>
-It lets you type in code or english. And encodes and decodes selected text in a file.<br>
+Correspondence is a text editor that can toggle between code or normal text.
+It lets you type in code or english. And encodes and decodes selected text in a file.
 The code is defined in the source code and uses this astrology cypher as default:<br>
 
 A / Sun: ☉<br>
