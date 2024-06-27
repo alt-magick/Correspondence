@@ -241,6 +241,12 @@ void DecodeText() {
 LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CHAR: {
+        bool ctrlPressed = GetKeyState(VK_CONTROL) & 0x8000;
+
+        if (ctrlPressed) {
+            // Handle Ctrl+C
+            return 0;
+        }
         if (enableSubstitution) {
             switch (wParam) {
             case 'A': case 'a': wParam = L'☉'; break;
