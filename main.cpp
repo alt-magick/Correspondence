@@ -15,9 +15,9 @@
 #define ID_EDIT_PASTE 1010
 #define ID_CTRL_E_ENCODE 1011
 #define ID_CTRL_D_DECODE 1012
-#define ID_CTRL_T 1016
-#define ID_CTRL_S 1016
-#define ID_CTRL_O 1016
+#define ID_CTRL_T 1013
+#define ID_CTRL_S 1014
+#define ID_CTRL_O 1015
 #define ID_CTRL_Q 1016
 
 #pragma comment(lib, "user32.lib")
