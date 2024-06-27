@@ -15,9 +15,6 @@
 #define ID_EDIT_PASTE 1010
 #define ID_CTRL_E_ENCODE 1011
 #define ID_CTRL_D_DECODE 1012
-#define ID_CTRL_X_CUT 1013
-#define ID_CTRL_C_COPY 1014
-#define ID_CTRL_V_PASTE 1015
 #define ID_CTRL_T 1016
 #define ID_CTRL_S 1016
 #define ID_CTRL_O 1016
@@ -287,18 +284,7 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_D_DECODE, 0), (LPARAM)hwnd);
             return 0;
         }
-        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'X') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_X_CUT, 0), (LPARAM)hwnd);
-            return 0; 
-        }
-        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'C') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_C_COPY, 0), (LPARAM)hwnd);
-            return 0; 
-        }
-        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'V') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_V_PASTE, 0), (LPARAM)hwnd);
-            return 0; 
-        }
+
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'T') {
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_T, 0), (LPARAM)hwnd);
             return 0; 
@@ -627,18 +613,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             SendMessage(hEdit, WM_PASTE, 0, 0);
             break;
 
-        case ID_CTRL_X_CUT: {            
-            SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_EDIT_CUT, 0), 0);
-            break;
-        }
-        case ID_CTRL_C_COPY: {
-            SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_EDIT_COPY, 0), 0);
-            break;
-        }
-        case ID_CTRL_V_PASTE: {
-            SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_EDIT_PASTE, 0), 0);
-            break;
-        }
         case ID_EDIT_CUT: {
             SendMessage(hEdit, WM_CUT, 0, 0);
             break;
