@@ -19,6 +19,7 @@
 #define ID_CTRL_S 1014
 #define ID_CTRL_O 1015
 #define ID_CTRL_Q 1016
+#define ID_CTRL_A 1017
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "comctl32.lib")
@@ -38,6 +39,14 @@ void SaveFile(HWND hwnd);
 void OpenFile(HWND hwnd);
 void EncodeText();
 void DecodeText();
+
+void SelectAllText(HWND hwndEdit) {
+    // Get the length of the text in the edit control
+    int textLength = GetWindowTextLength(hwndEdit);
+
+    // Set the selection to encompass the entire text
+    SendMessage(hwndEdit, EM_SETSEL, 0, textLength);
+}
 
 void UpdateStatusBar() {
     int index = 0;
@@ -243,8 +252,7 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
     case WM_CHAR: {
         bool ctrlPressed = GetKeyState(VK_CONTROL) & 0x8000;
 
-        if (ctrlPressed) {
-            // Handle Ctrl+C
+        if (ctrlPressed) {           
             return 0;
         }
         if (enableSubstitution) {
@@ -306,6 +314,10 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Q') {
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_EXIT, 0), (LPARAM)hwnd);
             return 0; 
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'A') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_A, 0), (LPARAM)hwnd);
+            return 0;
         }
         break;
     }
@@ -644,7 +656,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             UpdateStatusBar(); 
             break;
         }
-
+        case ID_CTRL_A: {
+            int textLength = GetWindowTextLength(hEdit);
+            SendMessage(hEdit, EM_SETSEL, 0, textLength);
+            break;
+        }
         case ID_FILE_EXIT:
             DestroyWindow(hwnd);
             break;
