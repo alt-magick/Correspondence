@@ -259,19 +259,33 @@ void DecodeText() {
 
 void Undo() {
     if (!undoStack.empty()) {
+        std::wstring currentState;
+        int length = GetWindowTextLength(hEdit) + 1;
+        currentState.resize(length);
+        GetWindowText(hEdit, &currentState[0], length);
+
         std::wstring previousState = undoStack.top();
-        redoStack.push(previousState);
+        redoStack.push(currentState); // Push the current state to the redo stack
         undoStack.pop();
         SetWindowText(hEdit, previousState.c_str());
     }
 }
+
 void Redo() {
     if (!redoStack.empty()) {
-        std::wstring previousState = redoStack.top();
+        std::wstring currentState;
+        int length = GetWindowTextLength(hEdit) + 1;
+        currentState.resize(length);
+        GetWindowText(hEdit, &currentState[0], length);
+
+        std::wstring nextState = redoStack.top();
+        undoStack.push(currentState); // Push the current state to the undo stack
         redoStack.pop();
-        SetWindowText(hEdit, previousState.c_str());
+        SetWindowText(hEdit, nextState.c_str());
     }
 }
+
+
 LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CHAR: {
