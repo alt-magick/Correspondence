@@ -13,13 +13,18 @@
 #define ID_EDIT_CUT 1008
 #define ID_EDIT_COPY 1009
 #define ID_EDIT_PASTE 1010
-#define ID_CTRL_E_ENCODE 1011
-#define ID_CTRL_D_DECODE 1012
-#define ID_CTRL_T 1013
-#define ID_CTRL_S 1014
-#define ID_CTRL_O 1015
-#define ID_CTRL_Q 1016
-#define ID_CTRL_A 1017
+#define ID_EDIT_DELETE 1011
+#define ID_EDIT_UNDO 1012
+#define ID_EDIT_ALL 1013
+#define ID_CTRL_E_ENCODE 1014
+#define ID_CTRL_D_DECODE 1015
+#define ID_CTRL_T 1016
+#define ID_CTRL_S 1017
+#define ID_CTRL_O 1018
+#define ID_CTRL_Q 1019
+#define ID_CTRL_A 1020
+#define ID_CTRL_Z 1021
+#define ID_CTRL_A 1022
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "comctl32.lib")
@@ -41,10 +46,8 @@ void EncodeText();
 void DecodeText();
 
 void SelectAllText(HWND hwndEdit) {
-    // Get the length of the text in the edit control
-    int textLength = GetWindowTextLength(hwndEdit);
 
-    // Set the selection to encompass the entire text
+    int textLength = GetWindowTextLength(hwndEdit);
     SendMessage(hwndEdit, EM_SETSEL, 0, textLength);
 }
 
@@ -185,7 +188,7 @@ void EncodeText() {
                 break;
             }
 
-            buffer[i] = newChar; 
+            buffer[i] = newChar;
         }
 
         SetWindowText(hEdit, buffer);
@@ -203,7 +206,7 @@ void DecodeText() {
 
         for (int i = 0; i < len; ++i) {
             WCHAR originalChar = buffer[i];
-            WCHAR newChar = originalChar; 
+            WCHAR newChar = originalChar;
 
             switch (originalChar) {
             case L'☉': newChar = L'a'; break;
@@ -232,7 +235,7 @@ void DecodeText() {
             case L'♑': newChar = L'x'; break;
             case L'♒': newChar = L'y'; break;
             case L'♓': newChar = L'z'; break;
-            default: 
+            default:
                 newChar = originalChar;
                 break;
             }
@@ -252,7 +255,7 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
     case WM_CHAR: {
         bool ctrlPressed = GetKeyState(VK_CONTROL) & 0x8000;
 
-        if (ctrlPressed) {           
+        if (ctrlPressed) {
             return 0;
         }
         if (enableSubstitution) {
@@ -291,9 +294,9 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
     case WM_KEYDOWN: {
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'E') {
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_E_ENCODE, 0), (LPARAM)hwnd);
-            return 0; 
+            return 0;
         }
-       
+
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'D') {
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_D_DECODE, 0), (LPARAM)hwnd);
             return 0;
@@ -301,19 +304,27 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'T') {
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_T, 0), (LPARAM)hwnd);
-            return 0; 
+            return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'S') {
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_SAVE, 0), (LPARAM)hwnd);
-            return 0; 
+            return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'O') {
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_OPEN, 0), (LPARAM)hwnd);
-            return 0; 
+            return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Q') {
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_EXIT, 0), (LPARAM)hwnd);
-            return 0; 
+            return 0;
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'A') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_A, 0), (LPARAM)hwnd);
+            return 0;
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Z') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_Z, 0), (LPARAM)hwnd);
+            return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'A') {
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_A, 0), (LPARAM)hwnd);
@@ -357,13 +368,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         int statusParts[] = { 200, -1 };
         SendMessage(hStatusBar, SB_SETPARTS, sizeof(statusParts) / sizeof(int), (LPARAM)&statusParts);
 
-        UpdateStatusBar(); 
+        UpdateStatusBar();
         break;
     }
     case WM_SIZE: {
         RECT rcClient;
         GetClientRect(hwnd, &rcClient);
-        SetWindowPos(hEdit, NULL, 0, 0, rcClient.right, rcClient.bottom - 20, SWP_NOZORDER); 
+        SetWindowPos(hEdit, NULL, 0, 0, rcClient.right, rcClient.bottom - 20, SWP_NOZORDER);
         SetWindowPos(hStatusBar, NULL, 0, rcClient.bottom - 20, rcClient.right, 20, SWP_NOZORDER);
         break;
     }
@@ -387,7 +398,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 if (hClipboardData != NULL) {
                     WCHAR* pszData = static_cast<WCHAR*>(GlobalLock(hClipboardData));
                     if (pszData != NULL) {
-                       
+
                         size_t length = wcslen(pszData);
                         WCHAR* pszModifiedData = new WCHAR[length + 1];
                         if (pszModifiedData != NULL) {
@@ -476,10 +487,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                             }
                             pszModifiedData[length] = L'\0';
 
-                           
+
                             EmptyClipboard();
 
-                            
+
                             HANDLE hNewData = GlobalAlloc(GMEM_MOVEABLE, (length + 1) * sizeof(WCHAR));
                             if (hNewData != NULL) {
                                 WCHAR* pszNewData = static_cast<WCHAR*>(GlobalLock(hNewData));
@@ -487,7 +498,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                                     wcscpy_s(pszNewData, length + 1, pszModifiedData);
                                     GlobalUnlock(hNewData);
 
-                                    
+
                                     SetClipboardData(CF_UNICODETEXT, hNewData);
                                 }
                                 else {
@@ -513,7 +524,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 if (hClipboardData != NULL) {
                     WCHAR* pszData = static_cast<WCHAR*>(GlobalLock(hClipboardData));
                     if (pszData != NULL) {
-                        
+
                         size_t length = wcslen(pszData);
                         WCHAR* pszModifiedData = new WCHAR[length + 1];
                         if (pszModifiedData != NULL) {
@@ -601,8 +612,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                                     pszModifiedData[i] = pszData[i];
                                 }
                             }
-                            pszModifiedData[length] = L'\0'; 
-                           
+                            pszModifiedData[length] = L'\0';
+
                             EmptyClipboard();
 
                             HANDLE hNewData = GlobalAlloc(GMEM_MOVEABLE, (length + 1) * sizeof(WCHAR));
@@ -612,11 +623,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                                     wcscpy_s(pszNewData, length + 1, pszModifiedData);
                                     GlobalUnlock(hNewData);
 
-                                   
+
                                     SetClipboardData(CF_UNICODETEXT, hNewData);
                                 }
                                 else {
-                                    GlobalFree(hNewData); 
+                                    GlobalFree(hNewData);
                                 }
                             }
 
@@ -643,6 +654,28 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             SendMessage(hEdit, WM_PASTE, 0, 0);
             break;
         }
+        case ID_EDIT_UNDO: {
+            SendMessage(hEdit, WM_UNDO, 0, 0);
+            break;
+        }
+        case ID_EDIT_ALL: {
+            SendMessage(hEdit, EM_SETSEL, 0, -1);
+            SendMessage(hEdit, WM_COPY, 0, 0);
+            break;
+        }
+        case ID_EDIT_DELETE: {
+            DWORD start, end;
+            SendMessage(hEdit, EM_GETSEL, reinterpret_cast<WPARAM>(&start), reinterpret_cast<LPARAM>(&end));
+
+            if (start != end) {
+                SendMessage(hEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(TEXT("")));
+            }
+            else {
+                SendMessage(hEdit, EM_SETSEL, start, end + 1);
+                SendMessage(hEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(TEXT("")));
+            }
+            break;
+        }
         case ID_CTRL_D_DECODE: {
             SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_CODE_DECODE, 0), 0);
             break;
@@ -651,9 +684,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_CODE_ENCODE, 0), 0);
             break;
         }
+
+        case ID_CTRL_Z: {
+            ;
+            SendMessage(hEdit, EM_UNDO, 0, 0);
+            break;
+        }
         case ID_CTRL_T: {
             enableSubstitution = !enableSubstitution;
-            UpdateStatusBar(); 
+            UpdateStatusBar();
             break;
         }
         case ID_CTRL_A: {
@@ -685,7 +724,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
     INITCOMMONCONTROLSEX iccex;
     iccex.dwSize = sizeof(iccex);
-    iccex.dwICC = ICC_WIN95_CLASSES; 
+    iccex.dwICC = ICC_WIN95_CLASSES;
     InitCommonControlsEx(&iccex);
 
     WNDCLASS wc = {};
@@ -709,7 +748,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     HMENU hSubMenuFile = CreatePopupMenu();
     AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_OPEN, L"&Open  -  Ctrl + O");
     AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_SAVE, L"&Save  -  Ctrl + S");
-    AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);    
+    AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);
     AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);
     AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_EXIT, L"E&xit  -  Ctrl + Q");
 
@@ -719,14 +758,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     AppendMenu(hSubMenuCode, MF_STRING, ID_TOGGLE_SUBSTITUTION, L"&Toggle  -  Ctrl + T");
 
     HMENU hSubMenuEdit = CreatePopupMenu();
+    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_UNDO, L"&Undo  -  Ctrl + Z");
+    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_DELETE, L"&Delete  -  Del");
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_CUT, L"&Cut  -  Ctrl + X");
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_COPY, L"&Copy  -  Ctrl + C");
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_PASTE, L"&Paste - Ctrl + V");
+    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_ALL, L"&Select All - Ctrl + A");
 
     AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuFile, L"&File");
     AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuEdit, L"&Edit");
     AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuCode, L"&Code");
-    
+
 
     SetMenu(hwnd, hMenu);
 
