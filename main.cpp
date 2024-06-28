@@ -17,16 +17,17 @@
 #define ID_EDIT_DELETE 1011
 #define ID_EDIT_ALL 1012
 #define ID_EDIT_UNDO 1013
-#define ID_CTRL_E_ENCODE 1014
-#define ID_CTRL_D_DECODE 1015
-#define ID_CTRL_T 1016
-#define ID_CTRL_S 1017
-#define ID_CTRL_O 1018
-#define ID_CTRL_Q 1019
-#define ID_CTRL_A 1020
-#define ID_CTRL_X 1021
-#define ID_CTRL_V 1022
-#define ID_CTRL_C 1023
+#define ID_EDIT_REDO 1014
+#define ID_CTRL_E_ENCODE 1015
+#define ID_CTRL_D_DECODE 1016
+#define ID_CTRL_T 1017
+#define ID_CTRL_S 1018
+#define ID_CTRL_O 1019
+#define ID_CTRL_Q 1020
+#define ID_CTRL_A 1021
+#define ID_CTRL_X 1022
+#define ID_CTRL_V 1023
+#define ID_CTRL_C 1024
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "comctl32.lib")
@@ -44,6 +45,7 @@ bool enableSubstitution = false;
 
 // Stack for undo functionality
 std::stack<std::wstring> undoStack;
+std::stack<std::wstring> redoStack;
 
 void SaveFile(HWND hwnd);
 void OpenFile(HWND hwnd);
@@ -258,11 +260,18 @@ void DecodeText() {
 void Undo() {
     if (!undoStack.empty()) {
         std::wstring previousState = undoStack.top();
+        redoStack.push(previousState);
         undoStack.pop();
         SetWindowText(hEdit, previousState.c_str());
     }
 }
-
+void Redo() {
+    if (!redoStack.empty()) {
+        std::wstring previousState = redoStack.top();
+        redoStack.pop();
+        SetWindowText(hEdit, previousState.c_str());
+    }
+}
 LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CHAR: {
@@ -278,6 +287,7 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 WCHAR* buffer = new WCHAR[len + 1];
                 GetWindowText(hwnd, buffer, len + 1);
                 undoStack.push(std::wstring(buffer));
+                
                 delete[] buffer;
             }
         }
@@ -359,6 +369,10 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Z') {
             Undo(); 
+            return 0;
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Y') {
+            Redo();
             return 0;
         }
         break;
@@ -694,6 +708,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             Undo();
             break;
         }
+        case ID_EDIT_REDO: {
+            Redo();
+            break;
+        }
         case ID_EDIT_DELETE: {
             DWORD start, end;
             SendMessage(hEdit, EM_GETSEL, reinterpret_cast<WPARAM>(&start), reinterpret_cast<LPARAM>(&end));
@@ -796,6 +814,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     HMENU hSubMenuEdit = CreatePopupMenu();
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_UNDO, L"&Undo  -  Ctrl + Z");
+    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_REDO, L"&Redo  -  Ctrl + Y");
     AppendMenu(hSubMenuEdit, MF_SEPARATOR, 0, NULL);
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_DELETE, L"&Delete  -  Del");
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_CUT, L"&Cut  -  Ctrl + X");
