@@ -749,7 +749,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_OPEN, L"&Open  -  Ctrl + O");
     AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_SAVE, L"&Save  -  Ctrl + S");
     AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);
     AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_EXIT, L"E&xit  -  Ctrl + Q");
 
     HMENU hSubMenuCode = CreatePopupMenu();
@@ -759,10 +758,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     HMENU hSubMenuEdit = CreatePopupMenu();
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_UNDO, L"&Undo  -  Ctrl + Z");
+    AppendMenu(hSubMenuEdit, MF_SEPARATOR, 0, NULL);
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_DELETE, L"&Delete  -  Del");
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_CUT, L"&Cut  -  Ctrl + X");
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_COPY, L"&Copy  -  Ctrl + C");
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_PASTE, L"&Paste - Ctrl + V");
+    AppendMenu(hSubMenuEdit, MF_SEPARATOR, 0, NULL);
     AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_ALL, L"&Select All - Ctrl + A");
 
     AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuFile, L"&File");
