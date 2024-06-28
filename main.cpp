@@ -2,6 +2,7 @@
 #include <commctrl.h>
 #include <commdlg.h>
 #include <string>
+#include <stack>
 
 #define ID_FILE_SAVE 1001
 #define ID_FILE_EXIT 1002
@@ -14,8 +15,8 @@
 #define ID_EDIT_COPY 1009
 #define ID_EDIT_PASTE 1010
 #define ID_EDIT_DELETE 1011
-#define ID_EDIT_UNDO 1012
-#define ID_EDIT_ALL 1013
+#define ID_EDIT_ALL 1012
+#define ID_EDIT_UNDO 1013
 #define ID_CTRL_E_ENCODE 1014
 #define ID_CTRL_D_DECODE 1015
 #define ID_CTRL_T 1016
@@ -23,8 +24,9 @@
 #define ID_CTRL_O 1018
 #define ID_CTRL_Q 1019
 #define ID_CTRL_A 1020
-#define ID_CTRL_Z 1021
-#define ID_CTRL_A 1022
+#define ID_CTRL_X 1021
+#define ID_CTRL_V 1022
+#define ID_CTRL_C 1023
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "comctl32.lib")
@@ -39,6 +41,9 @@ WNDPROC OldEditProc;
 HFONT hFont;
 OPENFILENAME ofn;
 bool enableSubstitution = false;
+
+// Stack for undo functionality
+std::stack<std::wstring> undoStack;
 
 void SaveFile(HWND hwnd);
 void OpenFile(HWND hwnd);
@@ -250,13 +255,31 @@ void DecodeText() {
     UpdateStatusBar();
 }
 
+void Undo() {
+    if (!undoStack.empty()) {
+        std::wstring previousState = undoStack.top();
+        undoStack.pop();
+        SetWindowText(hEdit, previousState.c_str());
+    }
+}
+
 LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CHAR: {
         bool ctrlPressed = GetKeyState(VK_CONTROL) & 0x8000;
 
         if (ctrlPressed) {
-            return 0;
+
+                return 0;
+        }
+        if (wParam == VK_RETURN || wParam == VK_DELETE || wParam == VK_BACK || wParam == VK_TAB) {
+            int len = GetWindowTextLength(hwnd);
+            if (len > 0) {
+                WCHAR* buffer = new WCHAR[len + 1];
+                GetWindowText(hwnd, buffer, len + 1);
+                undoStack.push(std::wstring(buffer));
+                delete[] buffer;
+            }
         }
         if (enableSubstitution) {
             switch (wParam) {
@@ -322,12 +345,20 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
             SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_A, 0), (LPARAM)hwnd);
             return 0;
         }
-        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Z') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_Z, 0), (LPARAM)hwnd);
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'X') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_X, 0), (LPARAM)hwnd);
             return 0;
         }
-        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'A') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_A, 0), (LPARAM)hwnd);
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'V') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_V, 0), (LPARAM)hwnd);
+            return 0;
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'C') {
+            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_C, 0), (LPARAM)hwnd);
+            return 0;
+        }
+        if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Z') {
+            Undo(); 
             return 0;
         }
         break;
@@ -654,13 +685,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             SendMessage(hEdit, WM_PASTE, 0, 0);
             break;
         }
-        case ID_EDIT_UNDO: {
-            SendMessage(hEdit, WM_UNDO, 0, 0);
-            break;
-        }
         case ID_EDIT_ALL: {
             SendMessage(hEdit, EM_SETSEL, 0, -1);
             SendMessage(hEdit, WM_COPY, 0, 0);
+            break;
+        }
+        case ID_EDIT_UNDO: {
+            Undo();
             break;
         }
         case ID_EDIT_DELETE: {
@@ -685,11 +716,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             break;
         }
 
-        case ID_CTRL_Z: {
-            ;
-            SendMessage(hEdit, EM_UNDO, 0, 0);
-            break;
-        }
         case ID_CTRL_T: {
             enableSubstitution = !enableSubstitution;
             UpdateStatusBar();
@@ -698,6 +724,18 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         case ID_CTRL_A: {
             int textLength = GetWindowTextLength(hEdit);
             SendMessage(hEdit, EM_SETSEL, 0, textLength);
+            break;
+        }
+        case ID_CTRL_X: {
+            SendMessage(hEdit, WM_CUT, 0, 0);
+            break;
+        }
+        case ID_CTRL_V: {
+            SendMessage(hEdit, WM_PASTE, 0, 0);
+            break;
+        }
+        case ID_CTRL_C: {
+            SendMessage(hEdit, WM_COPY, 0, 0);
             break;
         }
         case ID_FILE_EXIT:
