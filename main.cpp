@@ -365,7 +365,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             0, 0, 0, 0,
             hwnd, (HMENU)ID_STATUSBAR, GetModuleHandle(NULL), NULL);
 
-        int statusParts[] = { 200, -1 };
+        int statusParts[] = { 125, -1 };
         SendMessage(hStatusBar, SB_SETPARTS, sizeof(statusParts) / sizeof(int), (LPARAM)&statusParts);
 
         UpdateStatusBar();
@@ -737,7 +737,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     HWND hwnd = CreateWindowExW(
         0, CLASS_NAME, WINDOW_TITLE,
         WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
+        CW_USEDEFAULT, CW_USEDEFAULT, 480, 620,
         NULL, NULL, hInstance, NULL);
 
     if (hwnd == NULL) {
