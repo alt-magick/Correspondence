@@ -52,6 +52,17 @@ void OpenFile(HWND hwnd);
 void EncodeText();
 void DecodeText();
 
+void SaveCurrentStateForUndo() {
+    std::wstring currentState;
+    int length = GetWindowTextLength(hEdit) + 1;
+    currentState.resize(length);
+    GetWindowText(hEdit, &currentState[0], length);
+    undoStack.push(currentState);
+    while (!redoStack.empty()) {
+        redoStack.pop();
+    }
+}
+
 void SelectAllText(HWND hwndEdit) {
 
     int textLength = GetWindowTextLength(hwndEdit);
@@ -296,14 +307,7 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
                 return 0;
         }
         if (wParam == VK_RETURN || wParam == VK_DELETE || wParam == VK_BACK || wParam == VK_TAB) {
-            int len = GetWindowTextLength(hwnd);
-            if (len > 0) {
-                WCHAR* buffer = new WCHAR[len + 1];
-                GetWindowText(hwnd, buffer, len + 1);
-                undoStack.push(std::wstring(buffer));
-                
-                delete[] buffer;
-            }
+            SaveCurrentStateForUndo();
         }
         if (enableSubstitution) {
             switch (wParam) {
@@ -451,6 +455,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             UpdateStatusBar();
             break;
         case ID_CODE_ENCODE:
+            SaveCurrentStateForUndo();
             SendMessage(hEdit, WM_CUT, 0, 0);
             if (OpenClipboard(hwnd)) {
                 HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
@@ -577,6 +582,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             break;
 
         case ID_CODE_DECODE:
+            SaveCurrentStateForUndo();
             SendMessage(hEdit, WM_CUT, 0, 0);
             if (OpenClipboard(hwnd)) {
                 HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
