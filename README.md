@@ -59,8 +59,6 @@ Developed as a versatile text editor, my tool called "Correspondence" offers use
 
 The astrology cipher integrated into Correspondence assigns specific symbols to each letter of the alphabet, correlating them with astrological entities. For instance, 'A' corresponds to the Sun symbol (☉), 'B' to the Full Moon (●), and so forth. This encoding mechanism allows users to imbue their textual expressions with symbolic meanings associated with these cosmic elements. In chaos magic, symbols hold significant power as carriers of intention and meaning.
 
-Moreover, the act of encoding and decoding text within the editor mirrors the chaos magical practice of sigils. Where desires and intentions are distilled into abstract symbols and charged with personal energy to manifest outcomes in the physical or psychic realm. The astrology cipher acts as a sigilization technique, transforming mundane text into a vehicle for magical intent.
-
 The integration of the astrology cipher aligns with chaos magic's embrace of modern technologies and cultural symbols. By leveraging familiar astrological symbols in digital communication, the program bridges ancient mystical traditions with contemporary technological interfaces. This synthesis not only democratizes access to esoteric practices but also recontextualizes them within the framework of modernity.
 
 The editor exemplifies how technology can serve as a conduit for magical practice and personal transformation in the chaotic landscape of the 21st century. By blending coding capabilities with esoteric symbolism, the program invites users to explore the intersection of logic and intuition, structure and creativity.
