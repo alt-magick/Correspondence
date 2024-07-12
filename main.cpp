@@ -304,7 +304,7 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 
         if (ctrlPressed) {
 
-                return 0;
+            return 0;
         }
         if (wParam == VK_RETURN || wParam == VK_DELETE || wParam == VK_BACK || wParam == VK_TAB) {
             SaveCurrentStateForUndo();
@@ -386,7 +386,7 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
             return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Z') {
-            Undo(); 
+            Undo();
             return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Y') {
@@ -405,15 +405,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_CREATE: {
         hEdit = CreateWindowExW(
             0, L"EDIT", L"",
-            WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL |
-            ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL,
+            WS_CHILD | WS_VISIBLE | WS_VSCROLL |
+            ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL,
             0, 0, 0, 0,
             hwnd, (HMENU)1, GetModuleHandle(NULL), NULL);
         if (hEdit == NULL) {
             MessageBox(hwnd, L"Could not create edit box.", L"Error", MB_OK | MB_ICONERROR);
             return -1;
         }
-
+        SendMessage(hEdit, EM_SETWORDBREAKPROC, 0, 0);
         hFont = CreateFontW(
             32, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
             DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
