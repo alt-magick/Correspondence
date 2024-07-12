@@ -810,11 +810,27 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     RegisterClass(&wc);
 
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+    // Set window dimensions
+    int windowWidth = 480;
+    int windowHeight = 640;
+
+    // Calculate position to center the window
+    int posX = (screenWidth - windowWidth) - 20;
+    int posY = (screenHeight - windowHeight) / 2 - 20;
+
+    // Create the window
     HWND hwnd = CreateWindowExW(
-        0, CLASS_NAME, WINDOW_TITLE,
+        0,
+        CLASS_NAME,
+        WINDOW_TITLE,
         WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, 480, 620,
-        NULL, NULL, hInstance, NULL);
+        posX, posY,           // Use calculated position
+        windowWidth, windowHeight,
+        NULL, NULL, hInstance, NULL
+    );
 
     if (hwnd == NULL) {
         return 0;
