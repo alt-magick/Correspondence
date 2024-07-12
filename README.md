@@ -57,7 +57,7 @@ The concept of the "noosphere" a hypothetical sphere of human thought encircling
 
 Developed as a versatile text editor, my tool called "Correspondence" offers users the ability to seamlessly toggle between Sigil magick and standard text input. Through its ability to encode and decode text using an astrology cypher, it adds a layer of mysticism and intention to the act of editing text.
 
-The astrology cipher integrated into Correspondence assigns specific symbols to each letter of the alphabet, correlating them with astrological entities. For instance, 'A' corresponds to the Sun symbol (☉), 'B' to the Full Moon (●), and so forth. This encoding mechanism allows users to imbue their textual expressions with symbolic meanings associated with these cosmic elements. In chaos magic, symbols hold significant power as carriers of intention and meaning, akin to sigils used in traditional magical rituals.
+The astrology cipher integrated into Correspondence assigns specific symbols to each letter of the alphabet, correlating them with astrological entities. For instance, 'A' corresponds to the Sun symbol (☉), 'B' to the Full Moon (●), and so forth. This encoding mechanism allows users to imbue their textual expressions with symbolic meanings associated with these cosmic elements. In chaos magic, symbols hold significant power as carriers of intention and meaning.
 
 Moreover, the act of encoding and decoding text within the editor mirrors the chaos magical practice of sigils. Where desires and intentions are distilled into abstract symbols and charged with personal energy to manifest outcomes in the physical or psychic realm. The astrology cipher acts as a sigilization technique, transforming mundane text into a vehicle for magical intent.
 
