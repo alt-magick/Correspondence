@@ -45,7 +45,7 @@ Moving into the 21st century, chaos magic adapts to an era of rapid change and i
 
 Technomancy emerges within chaos magic circles, exploring digital tools like computers, smartphones, and the internet for spellcasting and reality manipulation. This includes coding sigils into software, crafting magical algorithms, and using social media for large-scale magical workings.
 
-Controversially, meme magic leverages internet memes to amplify magical intent through their viral nature. Advances in artificial intelligence prompt experiments with AI-generated sigils and machine learning to optimize magical practices, even creating AI entities as magical servitors.
+Meme magic leverages internet memes to amplify magical intent through their viral nature. Advances in artificial intelligence prompt experiments with AI-generated sigils and machine learning to optimize magical practices, even creating AI entities as magical servitors.
 
 Augmented and virtual reality technologies expand chaos magical frontiers, enabling creation of magical spaces in virtual environments and overlaying AR symbols onto the physical world.
 
@@ -53,17 +53,9 @@ As chaos magic evolves into its fifth decade, it adapts to technological, cultur
 
 Chaos magic's evolution mirrors our changing world, integrating new ideas from science, technology, and culture. It remains at the forefront of magical practice, challenging practitioners to expand their understanding and applications in the modern age.
 
-Technological integration is a prominent trend, encompassing computers, smartphones, digital sigils, and magical algorithms, with AI exploring new magical frontiers.
-
 The concept of the "noosphere" a hypothetical sphere of human thought encircling the earth, has been revived and reinterpreted by some chaos magicians. They view the global information network as a manifestation of this noosphere and attempt to perform magical workings that ripple through this collective field of human consciousness.
 
-The digital realm extends sigil magic into cyber-sigils and online egregores, exploring new avenues for magical exploration.
-
-Developed as a versatile text editor, my tool called "Correspondence"
-
-(Found at: https://github.com/alt-magick/Correspondence)
-
-offers users the ability to seamlessly toggle between Sigil magick and standard text input. Through its ability to encode and decode text using an astrology cypher, it adds a layer of mysticism and intention to the act of editing text.
+Developed as a versatile text editor, my tool called "Correspondence" offers users the ability to seamlessly toggle between Sigil magick and standard text input. Through its ability to encode and decode text using an astrology cypher, it adds a layer of mysticism and intention to the act of editing text.
 
 The astrology cipher integrated into Correspondence assigns specific symbols to each letter of the alphabet, correlating them with astrological entities. For instance, 'A' corresponds to the Sun symbol (☉), 'B' to the Full Moon (●), and so forth. This encoding mechanism allows users to imbue their textual expressions with symbolic meanings associated with these cosmic elements. In chaos magic, symbols hold significant power as carriers of intention and meaning, akin to sigils used in traditional magical rituals.
 
