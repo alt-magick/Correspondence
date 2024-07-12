@@ -31,7 +31,7 @@ W / Sagittarius: ♐︎<br>
 X / Capricorn: ♑︎<br>
 Y / Aquarius: ♒︎<br>
 Z / Pisces: ♓︎<br>
-<br><br><br>
+<br>
 # Chaos Magick
 In the realm of modern occultism, chaos magic has risen prominently in recent decades. This postmodern approach to esoteric arts has enthralled practitioners globally, emphasizing individual experimentation, paradigm shifts, and results-oriented techniques. At its core, chaos magic diverges radically from traditional systems, offering a flexible framework leveraging belief as a tool for personal and reality transformation.
 
