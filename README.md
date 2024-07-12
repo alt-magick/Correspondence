@@ -32,6 +32,8 @@ X / Capricorn: ♑︎<br>
 Y / Aquarius: ♒︎<br>
 Z / Pisces: ♓︎<br>
 <br><br><br>
+# Chaos Magick
+<br>
 In the realm of modern occultism, chaos magic has risen prominently in recent decades. This postmodern approach to esoteric arts has enthralled practitioners globally, emphasizing individual experimentation, paradigm shifts, and results-oriented techniques. At its core, chaos magic diverges radically from traditional systems, offering a flexible framework leveraging belief as a tool for personal and reality transformation.
 
 Central to chaos magic is sigil magic, a method where desires are encoded into abstract symbols, charged, and released into the subconscious or universe to manifest. This process, refined from Austin Osman Spare's concepts, is a cornerstone of chaos magical practice. Practitioners distill intent into unique glyphs, activated through meditation, sexual excitation, or symbol destruction to bypass critical faculties and implant desires in the subconscious.
