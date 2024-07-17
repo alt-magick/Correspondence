@@ -1,5 +1,5 @@
 # Correspondence
-The Chaos Magick Sigil Editor<br>
+The Chaos Magick Sigil Maker<br>
 Coded with AI<br>
 
 Correspondence is a text editor that toggles between sigils or normal text, and can encode and decode selected text in a file. The program uses this astrology cipher as default:<br>
