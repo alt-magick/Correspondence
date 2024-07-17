@@ -1,7 +1,7 @@
 # Correspondence
 The Chaos Magick Sigil Editor 
 
-Correspondence is a text editor that can toggle between encoded sigils and normal text, and encodes and decodes selected text in a file. The program uses this astrology cipher as default:<br>
+Correspondence is a text editor that toggles between encoded sigils or normal text, and can encode and decode selected text in a file. The program uses this astrology cipher as default:<br>
 
 A / Sun: ☉<br>
 B / Full Moon: ●<br>
