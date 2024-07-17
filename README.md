@@ -1,9 +1,9 @@
 # Correspondence
-The Correspondence Text Editor
+The Chaos Magick Sigil Editor 
 
-Correspondence is a text editor that can toggle between code or normal text.
-It lets you type in code or english. And encodes and decodes selected text in a file.
-The code is defined in the source code and uses this astrology cypher as default:<br>
+Correspondence is a text editor that can toggle between encoded sigils and normal text.
+It can encode and decode selected text in a file, and lets you toggle between encoded sigils and text.
+The code uses this astrology cypher as default:<br>
 
 A / Sun: ☉<br>
 B / Full Moon: ●<br>
