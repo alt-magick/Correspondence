@@ -2,7 +2,7 @@
 The Chaos Magick Sigil Maker<br>
 Coded with AI<br>
 
-Correspondence is a text editor that toggles between sigils or normal text, and can encode and decode selected text in a file. The program uses this astrology cipher as default:<br>
+Correspondence is a text editor that toggles between sigils or normal text, and can encode and decode selected text in a file. The program uses this astrology cipher for a magical alphabet, as outlined by Peter J. Carroll:<br>
 
 A / Sun: ☉<br>
 B / Full Moon: ●<br>
