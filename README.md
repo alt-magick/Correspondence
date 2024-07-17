@@ -2,8 +2,7 @@
 The Chaos Magick Sigil Editor 
 
 Correspondence is a text editor that can toggle between encoded sigils and normal text.
-It can encode and decode selected text in a file, and lets you toggle between encoded sigils and text.
-The code uses this astrology cypher as default:<br>
+And can encode and decode selected text in a file. The program uses this astrology cipher as default:<br>
 
 A / Sun: ☉<br>
 B / Full Moon: ●<br>
@@ -55,7 +54,7 @@ Chaos magic's evolution mirrors our changing world, integrating new ideas from s
 
 The concept of the "noosphere" a hypothetical sphere of human thought encircling the earth, has been revived and reinterpreted by some chaos magicians. They view the global information network as a manifestation of this noosphere and attempt to perform magical workings that ripple through this collective field of human consciousness.
 
-Developed as a versatile text editor, my tool called "Correspondence" offers users the ability to seamlessly toggle between Sigil magick and standard text input. Through its ability to encode and decode text using an astrology cypher, it adds a layer of mysticism and intention to the act of editing text.
+Developed as a versatile text editor, my tool called "Correspondence" offers users the ability to seamlessly toggle between Sigil magick and standard text input. Through its ability to encode and decode text using an astrology cipher, it adds a layer of mysticism and intention to the act of editing text.
 
 The astrology cipher integrated into Correspondence assigns specific symbols to each letter of the alphabet, correlating them with astrological entities. For instance, 'A' corresponds to the Sun symbol (☉), 'B' to the Full Moon (●), and so forth. This encoding mechanism allows users to imbue their textual expressions with symbolic meanings associated with these cosmic elements. In chaos magic, symbols hold significant power as carriers of intention and meaning.
 
