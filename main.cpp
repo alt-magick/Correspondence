@@ -1,4 +1,4 @@
-﻿#include <windows.h>
+#include <windows.h>
 #include <commctrl.h>
 #include <commdlg.h>
 #include <string>
@@ -31,7 +31,7 @@
 
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "comctl32.lib")
-#pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:wWinMainCRTStartup")
+#pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:WinMainCRTStartup")
 
 const wchar_t CLASS_NAME[] = L"Correspondence";
 const wchar_t WINDOW_TITLE[] = L"Correspondence";
@@ -40,7 +40,7 @@ HWND hEdit;
 HWND hStatusBar;
 WNDPROC OldEditProc;
 HFONT hFont;
-OPENFILENAME ofn;
+OPENFILENAMEW ofn;
 bool enableSubstitution = false;
 
 // Stack for undo functionality
@@ -54,9 +54,9 @@ void DecodeText();
 
 void SaveCurrentStateForUndo() {
     std::wstring currentState;
-    int length = GetWindowTextLength(hEdit) + 1;
+    int length = GetWindowTextLengthW(hEdit) + 1;
     currentState.resize(length);
-    GetWindowText(hEdit, &currentState[0], length);
+    GetWindowTextW(hEdit, &currentState[0], length);
     undoStack.push(currentState);
     while (!redoStack.empty()) {
         redoStack.pop();
@@ -65,16 +65,16 @@ void SaveCurrentStateForUndo() {
 
 void SelectAllText(HWND hwndEdit) {
 
-    int textLength = GetWindowTextLength(hwndEdit);
-    SendMessage(hwndEdit, EM_SETSEL, 0, textLength);
+    int textLength = GetWindowTextLengthW(hwndEdit);
+    SendMessageW(hwndEdit, EM_SETSEL, 0, textLength);
 }
 
 void UpdateStatusBar() {
     int index = 0;
     const int bufferSize = 256;
     wchar_t statusText[bufferSize];
-    swprintf_s(statusText, bufferSize, L"Code %s", enableSubstitution ? L"Enabled" : L"Disabled");
-    SendMessage(hStatusBar, SB_SETTEXT, index, (LPARAM)statusText);
+    swprintf(statusText, bufferSize, L"Code %ls", enableSubstitution ? L"Enabled" : L"Disabled");
+    SendMessageW(hStatusBar, SB_SETTEXTW, index, (LPARAM)statusText);
 }
 
 void SaveFile(HWND hwnd) {
@@ -89,17 +89,17 @@ void SaveFile(HWND hwnd) {
     ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
     ofn.nFilterIndex = 1;
 
-    if (GetSaveFileName(&ofn) == TRUE) {
-        HANDLE hFile = CreateFile(szFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (GetSaveFileNameW(&ofn) == TRUE) {
+        HANDLE hFile = CreateFileW(szFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
         if (hFile == INVALID_HANDLE_VALUE) {
-            MessageBox(hwnd, L"Failed to create file!", L"Error", MB_OK | MB_ICONERROR);
+            MessageBoxW(hwnd, L"Failed to create file!", L"Error", MB_OK | MB_ICONERROR);
             return;
         }
 
-        int len = GetWindowTextLength(hEdit);
+        int len = GetWindowTextLengthW(hEdit);
         if (len > 0) {
             WCHAR* buffer = new WCHAR[len + 1];
-            GetWindowText(hEdit, buffer, len + 1);
+            GetWindowTextW(hEdit, buffer, len + 1);
 
             const WCHAR bom = 0xFEFF;
             DWORD bytesWritten;
@@ -112,7 +112,7 @@ void SaveFile(HWND hwnd) {
 
         CloseHandle(hFile);
 
-        MessageBox(hwnd, L"File saved successfully!", L"Correspondence", MB_OK | MB_ICONINFORMATION);
+        MessageBoxW(hwnd, L"File saved successfully!", L"Correspondence", MB_OK | MB_ICONINFORMATION);
     }
 }
 
@@ -128,17 +128,17 @@ void OpenFile(HWND hwnd) {
     ofn.lpstrFilter = L"Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
     ofn.nFilterIndex = 1;
 
-    if (GetOpenFileName(&ofn) == TRUE) {
-        HANDLE hFile = CreateFile(szFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    if (GetOpenFileNameW(&ofn) == TRUE) {
+        HANDLE hFile = CreateFileW(szFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
         if (hFile == INVALID_HANDLE_VALUE) {
-            MessageBox(hwnd, L"Failed to open file!", L"Error", MB_OK | MB_ICONERROR);
+            MessageBoxW(hwnd, L"Failed to open file!", L"Error", MB_OK | MB_ICONERROR);
             return;
         }
 
         DWORD dwFileSize = GetFileSize(hFile, NULL);
         if (dwFileSize == INVALID_FILE_SIZE) {
             CloseHandle(hFile);
-            MessageBox(hwnd, L"Failed to get file size!", L"Error", MB_OK | MB_ICONERROR);
+            MessageBoxW(hwnd, L"Failed to get file size!", L"Error", MB_OK | MB_ICONERROR);
             return;
         }
 
@@ -153,10 +153,10 @@ void OpenFile(HWND hwnd) {
 
             buffer[bytesRead / sizeof(WCHAR)] = L'\0';
 
-            SetWindowText(hEdit, buffer);
+            SetWindowTextW(hEdit, buffer);
         }
         else {
-            MessageBox(hwnd, L"Failed to read file!", L"Error", MB_OK | MB_ICONERROR);
+            MessageBoxW(hwnd, L"Failed to read file!", L"Error", MB_OK | MB_ICONERROR);
         }
 
         delete[] buffer;
@@ -165,10 +165,10 @@ void OpenFile(HWND hwnd) {
 }
 
 void EncodeText() {
-    int len = GetWindowTextLength(hEdit);
+    int len = GetWindowTextLengthW(hEdit);
     if (len > 0) {
         WCHAR* buffer = new WCHAR[len + 1];
-        GetWindowText(hEdit, buffer, len + 1);
+        GetWindowTextW(hEdit, buffer, len + 1);
 
         for (int i = 0; i < len; ++i) {
             WCHAR originalChar = buffer[i];
@@ -209,7 +209,7 @@ void EncodeText() {
             buffer[i] = newChar;
         }
 
-        SetWindowText(hEdit, buffer);
+        SetWindowTextW(hEdit, buffer);
         delete[] buffer;
     }
 
@@ -217,10 +217,10 @@ void EncodeText() {
 }
 
 void DecodeText() {
-    int len = GetWindowTextLength(hEdit);
+    int len = GetWindowTextLengthW(hEdit);
     if (len > 0) {
         WCHAR* buffer = new WCHAR[len + 1];
-        GetWindowText(hEdit, buffer, len + 1);
+        GetWindowTextW(hEdit, buffer, len + 1);
 
         for (int i = 0; i < len; ++i) {
             WCHAR originalChar = buffer[i];
@@ -261,7 +261,7 @@ void DecodeText() {
             buffer[i] = newChar;
         }
 
-        SetWindowText(hEdit, buffer);
+        SetWindowTextW(hEdit, buffer);
         delete[] buffer;
     }
 
@@ -271,28 +271,28 @@ void DecodeText() {
 void Undo() {
     if (!undoStack.empty()) {
         std::wstring currentState;
-        int length = GetWindowTextLength(hEdit) + 1;
+        int length = GetWindowTextLengthW(hEdit) + 1;
         currentState.resize(length);
-        GetWindowText(hEdit, &currentState[0], length);
+        GetWindowTextW(hEdit, &currentState[0], length);
 
         std::wstring previousState = undoStack.top();
         redoStack.push(currentState); // Push the current state to the redo stack
         undoStack.pop();
-        SetWindowText(hEdit, previousState.c_str());
+        SetWindowTextW(hEdit, previousState.c_str());
     }
 }
 
 void Redo() {
     if (!redoStack.empty()) {
         std::wstring currentState;
-        int length = GetWindowTextLength(hEdit) + 1;
+        int length = GetWindowTextLengthW(hEdit) + 1;
         currentState.resize(length);
-        GetWindowText(hEdit, &currentState[0], length);
+        GetWindowTextW(hEdit, &currentState[0], length);
 
         std::wstring nextState = redoStack.top();
         undoStack.push(currentState); // Push the current state to the undo stack
         redoStack.pop();
-        SetWindowText(hEdit, nextState.c_str());
+        SetWindowTextW(hEdit, nextState.c_str());
     }
 }
 
@@ -344,45 +344,45 @@ LRESULT CALLBACK EditSubclassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
     }
     case WM_KEYDOWN: {
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'E') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_E_ENCODE, 0), (LPARAM)hwnd);
+            SendMessageW(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_E_ENCODE, 0), (LPARAM)hwnd);
             return 0;
         }
 
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'D') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_D_DECODE, 0), (LPARAM)hwnd);
+            SendMessageW(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_D_DECODE, 0), (LPARAM)hwnd);
             return 0;
         }
 
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'T') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_T, 0), (LPARAM)hwnd);
+            SendMessageW(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_T, 0), (LPARAM)hwnd);
             return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'S') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_SAVE, 0), (LPARAM)hwnd);
+            SendMessageW(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_SAVE, 0), (LPARAM)hwnd);
             return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'O') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_OPEN, 0), (LPARAM)hwnd);
+            SendMessageW(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_OPEN, 0), (LPARAM)hwnd);
             return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Q') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_EXIT, 0), (LPARAM)hwnd);
+            SendMessageW(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_FILE_EXIT, 0), (LPARAM)hwnd);
             return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'A') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_A, 0), (LPARAM)hwnd);
+            SendMessageW(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_A, 0), (LPARAM)hwnd);
             return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'X') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_X, 0), (LPARAM)hwnd);
+            SendMessageW(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_X, 0), (LPARAM)hwnd);
             return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'V') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_V, 0), (LPARAM)hwnd);
+            SendMessageW(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_V, 0), (LPARAM)hwnd);
             return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'C') {
-            SendMessage(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_C, 0), (LPARAM)hwnd);
+            SendMessageW(GetParent(hwnd), WM_COMMAND, MAKEWPARAM(ID_CTRL_C, 0), (LPARAM)hwnd);
             return 0;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000 && wParam == 'Z') {
@@ -408,28 +408,28 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             WS_CHILD | WS_VISIBLE | WS_VSCROLL |
             ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL,
             0, 0, 0, 0,
-            hwnd, (HMENU)1, GetModuleHandle(NULL), NULL);
+            hwnd, (HMENU)1, GetModuleHandleW(NULL), NULL);
         if (hEdit == NULL) {
-            MessageBox(hwnd, L"Could not create edit box.", L"Error", MB_OK | MB_ICONERROR);
+            MessageBoxW(hwnd, L"Could not create edit box.", L"Error", MB_OK | MB_ICONERROR);
             return -1;
         }
-        SendMessage(hEdit, EM_SETWORDBREAKPROC, 0, 0);
+        SendMessageW(hEdit, EM_SETWORDBREAKPROC, 0, 0);
         hFont = CreateFontW(
             32, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
             DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
             DEFAULT_PITCH | FF_SWISS, L"Segoe UI Symbol");
-        SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+        SendMessageW(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
 
-        OldEditProc = (WNDPROC)SetWindowLongPtr(hEdit, GWLP_WNDPROC, (LONG_PTR)EditSubclassProc);
+        OldEditProc = (WNDPROC)SetWindowLongPtrW(hEdit, GWLP_WNDPROC, (LONG_PTR)EditSubclassProc);
 
         hStatusBar = CreateWindowExW(
-            0, STATUSCLASSNAME, NULL,
+            0, STATUSCLASSNAMEW, NULL,
             WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
             0, 0, 0, 0,
-            hwnd, (HMENU)ID_STATUSBAR, GetModuleHandle(NULL), NULL);
+            hwnd, (HMENU)ID_STATUSBAR, GetModuleHandleW(NULL), NULL);
 
         int statusParts[] = { 125, -1 };
-        SendMessage(hStatusBar, SB_SETPARTS, sizeof(statusParts) / sizeof(int), (LPARAM)&statusParts);
+        SendMessageW(hStatusBar, SB_SETPARTS, sizeof(statusParts) / sizeof(int), (LPARAM)&statusParts);
 
         UpdateStatusBar();
         break;
@@ -456,7 +456,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             break;
         case ID_CODE_ENCODE:
             SaveCurrentStateForUndo();
-            SendMessage(hEdit, WM_CUT, 0, 0);
+            SendMessageW(hEdit, WM_CUT, 0, 0);
             if (OpenClipboard(hwnd)) {
                 HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
                 if (hClipboardData != NULL) {
@@ -578,12 +578,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
                 CloseClipboard();
             }
-            SendMessage(hEdit, WM_PASTE, 0, 0);
+            SendMessageW(hEdit, WM_PASTE, 0, 0);
             break;
 
         case ID_CODE_DECODE:
             SaveCurrentStateForUndo();
-            SendMessage(hEdit, WM_CUT, 0, 0);
+            SendMessageW(hEdit, WM_CUT, 0, 0);
             if (OpenClipboard(hwnd)) {
                 HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
                 if (hClipboardData != NULL) {
@@ -704,24 +704,24 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
                 CloseClipboard();
             }
-            SendMessage(hEdit, WM_PASTE, 0, 0);
+            SendMessageW(hEdit, WM_PASTE, 0, 0);
             break;
 
         case ID_EDIT_CUT: {
-            SendMessage(hEdit, WM_CUT, 0, 0);
+            SendMessageW(hEdit, WM_CUT, 0, 0);
             break;
         }
         case ID_EDIT_COPY: {
-            SendMessage(hEdit, WM_COPY, 0, 0);
+            SendMessageW(hEdit, WM_COPY, 0, 0);
             break;
         }
         case ID_EDIT_PASTE: {
-            SendMessage(hEdit, WM_PASTE, 0, 0);
+            SendMessageW(hEdit, WM_PASTE, 0, 0);
             break;
         }
         case ID_EDIT_ALL: {
-            SendMessage(hEdit, EM_SETSEL, 0, -1);
-            SendMessage(hEdit, WM_COPY, 0, 0);
+            SendMessageW(hEdit, EM_SETSEL, 0, -1);
+            SendMessageW(hEdit, WM_COPY, 0, 0);
             break;
         }
         case ID_EDIT_UNDO: {
@@ -734,23 +734,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         }
         case ID_EDIT_DELETE: {
             DWORD start, end;
-            SendMessage(hEdit, EM_GETSEL, reinterpret_cast<WPARAM>(&start), reinterpret_cast<LPARAM>(&end));
+            SendMessageW(hEdit, EM_GETSEL, reinterpret_cast<WPARAM>(&start), reinterpret_cast<LPARAM>(&end));
 
             if (start != end) {
-                SendMessage(hEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(TEXT("")));
+                SendMessageW(hEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(TEXT("")));
             }
             else {
-                SendMessage(hEdit, EM_SETSEL, start, end + 1);
-                SendMessage(hEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(TEXT("")));
+                SendMessageW(hEdit, EM_SETSEL, start, end + 1);
+                SendMessageW(hEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(TEXT("")));
             }
             break;
         }
         case ID_CTRL_D_DECODE: {
-            SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_CODE_DECODE, 0), 0);
+            SendMessageW(hwnd, WM_COMMAND, MAKEWPARAM(ID_CODE_DECODE, 0), 0);
             break;
         }
         case ID_CTRL_E_ENCODE: {
-            SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(ID_CODE_ENCODE, 0), 0);
+            SendMessageW(hwnd, WM_COMMAND, MAKEWPARAM(ID_CODE_ENCODE, 0), 0);
             break;
         }
 
@@ -761,26 +761,26 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         }
         case ID_CTRL_A: {
             int textLength = GetWindowTextLength(hEdit);
-            SendMessage(hEdit, EM_SETSEL, 0, textLength);
+            SendMessageW(hEdit, EM_SETSEL, 0, textLength);
             break;
         }
         case ID_CTRL_X: {
-            SendMessage(hEdit, WM_CUT, 0, 0);
+            SendMessageW(hEdit, WM_CUT, 0, 0);
             break;
         }
         case ID_CTRL_V: {
-            SendMessage(hEdit, WM_PASTE, 0, 0);
+            SendMessageW(hEdit, WM_PASTE, 0, 0);
             break;
         }
         case ID_CTRL_C: {
-            SendMessage(hEdit, WM_COPY, 0, 0);
+            SendMessageW(hEdit, WM_COPY, 0, 0);
             break;
         }
         case ID_FILE_EXIT:
             DestroyWindow(hwnd);
             break;
         default:
-            return DefWindowProc(hwnd, uMsg, wParam, lParam);
+            return DefWindowProcW(hwnd, uMsg, wParam, lParam);
         }
         break;
     }
@@ -792,23 +792,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         break;
     }
     default:
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+        return DefWindowProcW(hwnd, uMsg, wParam, lParam);
     }
     return 0;
 }
 
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     INITCOMMONCONTROLSEX iccex;
     iccex.dwSize = sizeof(iccex);
     iccex.dwICC = ICC_WIN95_CLASSES;
     InitCommonControlsEx(&iccex);
 
-    WNDCLASS wc = {};
+    WNDCLASSW wc = {};
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
     wc.lpszClassName = CLASS_NAME;
 
-    RegisterClass(&wc);
+    RegisterClassW(&wc);
 
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -838,30 +838,30 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     HMENU hMenu = CreateMenu();
     HMENU hSubMenuFile = CreatePopupMenu();
-    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_OPEN, L"&Open  -  Ctrl + O");
-    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_SAVE, L"&Save  -  Ctrl + S");
-    AppendMenu(hSubMenuFile, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hSubMenuFile, MF_STRING, ID_FILE_EXIT, L"E&xit  -  Ctrl + Q");
+    AppendMenuW(hSubMenuFile, MF_STRING, ID_FILE_OPEN, L"&Open  -  Ctrl + O");
+    AppendMenuW(hSubMenuFile, MF_STRING, ID_FILE_SAVE, L"&Save  -  Ctrl + S");
+    AppendMenuW(hSubMenuFile, MF_SEPARATOR, 0, NULL);
+    AppendMenuW(hSubMenuFile, MF_STRING, ID_FILE_EXIT, L"E&xit  -  Ctrl + Q");
 
     HMENU hSubMenuCode = CreatePopupMenu();
-    AppendMenu(hSubMenuCode, MF_STRING, ID_CODE_ENCODE, L"&Encode  -  Ctrl + E");
-    AppendMenu(hSubMenuCode, MF_STRING, ID_CODE_DECODE, L"&Decode  -  Ctrl + D");
-    AppendMenu(hSubMenuCode, MF_STRING, ID_TOGGLE_SUBSTITUTION, L"&Toggle  -  Ctrl + T");
+    AppendMenuW(hSubMenuCode, MF_STRING, ID_CODE_ENCODE, L"&Encode  -  Ctrl + E");
+    AppendMenuW(hSubMenuCode, MF_STRING, ID_CODE_DECODE, L"&Decode  -  Ctrl + D");
+    AppendMenuW(hSubMenuCode, MF_STRING, ID_TOGGLE_SUBSTITUTION, L"&Toggle  -  Ctrl + T");
 
     HMENU hSubMenuEdit = CreatePopupMenu();
-    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_UNDO, L"&Undo  -  Ctrl + Z");
-    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_REDO, L"&Redo  -  Ctrl + Y");
-    AppendMenu(hSubMenuEdit, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_DELETE, L"&Delete  -  Del");
-    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_CUT, L"&Cut  -  Ctrl + X");
-    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_COPY, L"&Copy  -  Ctrl + C");
-    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_PASTE, L"&Paste - Ctrl + V");
-    AppendMenu(hSubMenuEdit, MF_SEPARATOR, 0, NULL);
-    AppendMenu(hSubMenuEdit, MF_STRING, ID_EDIT_ALL, L"&Select All - Ctrl + A");
+    AppendMenuW(hSubMenuEdit, MF_STRING, ID_EDIT_UNDO, L"&Undo  -  Ctrl + Z");
+    AppendMenuW(hSubMenuEdit, MF_STRING, ID_EDIT_REDO, L"&Redo  -  Ctrl + Y");
+    AppendMenuW(hSubMenuEdit, MF_SEPARATOR, 0, NULL);
+    AppendMenuW(hSubMenuEdit, MF_STRING, ID_EDIT_DELETE, L"&Delete  -  Del");
+    AppendMenuW(hSubMenuEdit, MF_STRING, ID_EDIT_CUT, L"&Cut  -  Ctrl + X");
+    AppendMenuW(hSubMenuEdit, MF_STRING, ID_EDIT_COPY, L"&Copy  -  Ctrl + C");
+    AppendMenuW(hSubMenuEdit, MF_STRING, ID_EDIT_PASTE, L"&Paste - Ctrl + V");
+    AppendMenuW(hSubMenuEdit, MF_SEPARATOR, 0, NULL);
+    AppendMenuW(hSubMenuEdit, MF_STRING, ID_EDIT_ALL, L"&Select All - Ctrl + A");
 
-    AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuFile, L"&File");
-    AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuEdit, L"&Edit");
-    AppendMenu(hMenu, MF_POPUP, (UINT_PTR)hSubMenuCode, L"&Code");
+    AppendMenuW(hMenu, MF_POPUP, (UINT_PTR)hSubMenuFile, L"&File");
+    AppendMenuW(hMenu, MF_POPUP, (UINT_PTR)hSubMenuEdit, L"&Edit");
+    AppendMenuW(hMenu, MF_POPUP, (UINT_PTR)hSubMenuCode, L"&Code");
 
 
     SetMenu(hwnd, hMenu);
@@ -870,10 +870,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     UpdateWindow(hwnd);
 
     MSG msg = {};
-    while (GetMessage(&msg, NULL, 0, 0)) {
+    while (GetMessageW(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        DispatchMessageW(&msg);
     }
 
-    return msg.wParam;
+    return (int)msg.wParam;
 }
