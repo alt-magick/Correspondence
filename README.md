@@ -2,8 +2,8 @@
 The Chaos Magick Tool<br>
 Coded with AI<br>
 
-To compile: g++ -o correspondence.exe main.cpp -mwindows -lcomctl32 -static<br>
-Or, create an empty Visual Studio proecect and compile main.cpp<br><br>
+To compile: " g++ -o correspondence.exe main.cpp -mwindows -lcomctl32 -static "<br>
+Or, create an empty Visual Studio project and compile main.cpp<br>
 
 Correspondence is a text editor that toggles between sigils or normal text, and can encode and decode selected text in a file. It uses an astrology cipher as a magical alphabet, which was outlined by Peter J. Carroll in his book "Liber Null".<br>
 
