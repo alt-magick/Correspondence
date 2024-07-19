@@ -2,7 +2,7 @@
 The Chaos Magick Tool<br>
 Coded with AI<br>
 
-To compile:  <br>
+:To compile:  <br>
 * g++ -o correspondence.exe main.cpp -mwindows -lcomctl32 -static <br>
 * Or, create an empty Visual Studio project and compile main.cpp<br>
 
