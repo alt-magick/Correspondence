@@ -8,7 +8,7 @@ To compile:  <br>
 
 The g++ file hash is: &nbsp; fcd43171384b7ab4ba9922ea41118ac7eb6f1ed710491e3ec4e7eeb7f8073bde<br><br>
 According to VirusTotal, "No security vendors flagged this file as malicious"<br>
-https://www.virustotal.com/gui/file/fcd43171384b7ab4ba9922ea41118ac7eb6f1ed710491e3ec4e7eeb7f8073bde<br>
+https://www.virustotal.com/gui/file/fcd43171384b7ab4ba9922ea41118ac7eb6f1ed710491e3ec4e7eeb7f8073bde<br><br>
 
 Correspondence is a text editor that toggles between sigils or normal text, and can encode and decode selected text in a file. It uses an astrology cipher as a magical alphabet, which was outlined by Peter J. Carroll in his books "Liber Null" and "Psychonaut".<br>
 
