@@ -72,7 +72,7 @@ The editor exemplifies how technology can serve as a conduit for magical practic
 
 In a world of rapid change, chaos magic offers a unique paradigm, suited to navigating the challenges and opportunities of the modern age. Its ongoing evolution serves as a testament to humanity's quest to understand and influence the world, adapting ancient magical principles to our technological era.
 
-Peter J. Caroll's own website is a usefull resource ( https://www.specularium.org/ ).<br>
+Peter J. Caroll's own website is a usefull resource ( https://www.specularium.org/ ).<br><br>
 There is also a vast amount of literature on chaos magic in print and online.  Here is a list of some good books:
 
 The literature of chaos magic begins with the seminal works of its primary architects, Peter J. Carroll and Ray Sherwin.
