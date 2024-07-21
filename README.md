@@ -75,8 +75,6 @@ In a world of rapid change, chaos magic offers a unique paradigm, suited to navi
 Peter J. Caroll's own website is a usefull resource ( https://www.specularium.org/ ).<br><br>
 There is also a vast amount of literature on chaos magic in print and online.  Here are some good books:
 
-The literature of chaos magic begins with the seminal works of its primary architects, Peter J. Carroll and Ray Sherwin.
-
 "Liber Null" (1978) by Peter J. Carroll:
 This groundbreaking text laid the foundation for chaos magic theory and practice. Carroll introduced key concepts such as the use of gnosis (altered states of consciousness) in magic, the primacy of belief as a magical tool, and the importance of result-oriented practice. "Liber Null" presented a stripped-down, practical approach to magic that broke away from the elaborate ceremonial traditions of the past.
 
