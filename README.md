@@ -3,7 +3,7 @@ The Chaos Magick Tool<br>
 Coded with AI<br>
 
 To compile:  <br>
-* &nbsp; g++ -g -o correspondence.exe main.cpp -mwindows -lcomctl32 -static <br>
+* &nbsp; g++ -g -o correspondence.exe main.cpp -mwindows -lcomctl32 <br>
 * &nbsp; Or, create an empty Visual Studio project and compile main.cpp<br>
 
 The g++ file hash is: &nbsp; fcd43171384b7ab4ba9922ea41118ac7eb6f1ed710491e3ec4e7eeb7f8073bde<br><br>
