@@ -1,5 +1,5 @@
 # Correspondence
-The Chaos Magick Sigil Tool<br>
+A Chaos Magick Sigil Tool<br>
 Coded with AI<br>
 
 To compile:  <br>
