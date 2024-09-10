@@ -1,8 +1,7 @@
 # Correspondence
-https://sourceforge.net/projects/correspondence/ <br>
 A Sigil Magick Tool<br>
-Coded with AI<br>
-
+Coded with AI<br><br>
+https://sourceforge.net/projects/correspondence/ <br><br>
 To compile:  <br>
 * &nbsp; g++ -o correspondence.exe main.cpp -mwindows -lcomctl32 -static<br>
 * &nbsp; Or, create an empty Visual Studio project and compile main.cpp<br>
