@@ -1,5 +1,5 @@
 # Correspondence
-A Sigil Magick Tool<br>
+A Sigil Generator<br>
 Coded with AI<br><br>
 https://sourceforge.net/projects/correspondence/ <br><br>
 To compile:  <br>
