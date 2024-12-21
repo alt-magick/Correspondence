@@ -36,25 +36,19 @@ Y / Aquarius: ♒︎<br>
 Z / Pisces: ♓︎<br>
 <br>
 # Chaos Magick
-In the realm of modern occultism, chaos magic has risen prominently in recent decades. This postmodern approach to esoteric arts has enthralled practitioners globally, emphasizing individual experimentation, paradigm shifts, and results-oriented techniques. At its core, chaos magic diverges radically from traditional systems, offering a flexible framework leveraging belief as a tool for personal and reality transformation.
+At its core, chaos magic diverges radically from traditional systems, offering a flexible framework leveraging belief as a tool for personal and reality transformation.
 
-Central to chaos magic is sigil magic, a method where desires are encoded into abstract symbols, charged, and released into the subconscious or universe to manifest. This process, refined from Austin Osman Spare's concepts, is a cornerstone of chaos magical practice. Practitioners distill intent into unique glyphs, activated through meditation, sexual excitation, or symbol destruction to bypass critical faculties and implant desires in the subconscious.
+Central to chaos magic is sigil magic, a method where desires are encoded into symbols, charged, and released into the subconscious or universe to manifest. This process, refined from Austin Osman Spare's concepts, is a cornerstone of chaos magical practice. Practitioners distill intent into unique glyphs, activated through meditation, they bypass critical faculties and implant desires in the subconscious.
 
 Spare's foundational concepts of sigil magic (1886-1956) gained new life through revival by chaos magicians like Peter J. Carroll in the 1970s and 80s. They view sigil magic as a way to communicate with and program the subconscious, tapping into a primal symbolic language inherent in humans.
 
 Valued for simplicity, flexibility, and perceived effectiveness, sigil magic remains central to chaos magic. Its integration of psychological principles and symbolic thinking makes it fertile ground for exploration and experimentation.
 
-Moving into the 21st century, chaos magic adapts to an era of rapid change and information saturation. It stands as a testament to humanity's enduring quest to shape reality through will, offering a lens for spiritual practice, psychological transformation, and creative problem-solving.
-
-Technomancy emerges within chaos magic circles, exploring digital tools like computers, smartphones, and the internet for spellcasting and reality manipulation. This includes coding sigils into software, crafting magical algorithms, and using social media for large-scale magical workings.
+Moving into the 21st century, chaos magicians have begun using digital tools like computers, smartphones, and the internet for spellcasting and reality manipulation. This includes coding sigils into software, crafting magical algorithms, and using social media for large-scale magical workings.
 
 Meme magic leverages internet memes to amplify magical intent through their viral nature. Advances in artificial intelligence prompt experiments with AI-generated sigils and machine learning to optimize magical practices, even creating AI entities as magical servitors.
 
-Augmented and virtual reality technologies expand chaos magical frontiers, enabling creation of magical spaces in virtual environments and overlaying AR symbols onto the physical world.
-
-As chaos magic evolves into its fifth decade, it adapts to technological, cultural, and intellectual shifts. Its emphasis on flexibility, experimentation, and individual agency ensures its relevance in contemporary occultism, offering a potent approach to navigating modern complexities.
-
-Chaos magic's evolution mirrors our changing world, integrating new ideas from science, technology, and culture. It remains at the forefront of magical practice, challenging practitioners to expand their understanding and applications in the modern age.
+Augmented and virtual reality technologies expand chaos magical frontiers, enabling creation of magical spaces in virtual environments and overlaying AR symbols onto the physical universe.
 
 The concept of the "noosphere" a hypothetical sphere of human thought encircling the earth, has been revived and reinterpreted by some chaos magicians. They view the global information network as a manifestation of this noosphere and attempt to perform magical workings that ripple through this collective field of human consciousness.
 
@@ -62,13 +56,12 @@ Developed as a versatile text editor, my tool called "Correspondence" offers use
 
 The astrology cipher integrated into Correspondence assigns specific symbols to each letter of the alphabet, correlating them with astrological entities. For instance, 'A' corresponds to the Sun symbol (☉), 'B' to the Full Moon (●), and so forth. This encoding mechanism allows users to imbue their textual expressions with symbolic meanings associated with these cosmic elements. In chaos magic, symbols hold significant power as carriers of intention and meaning.
 
-The integration of the astrology cipher aligns with chaos magic's embrace of modern technologies and cultural symbols. By leveraging familiar astrological symbols in digital communication, the program bridges ancient mystical traditions with contemporary technological interfaces. This synthesis not only democratizes access to esoteric practices but also recontextualizes them within the framework of modernity.
+The integration of the astrology cipher aligns with chaos magic's embrace of modern technologies and cultural symbols. By leveraging familiar astrological symbols in digital communication, the program bridges ancient mystical traditions with contemporary technological interfaces.
 
 The editor exemplifies how technology can serve as a conduit for magical practice and personal transformation in the chaotic landscape of the 21st century. By blending coding capabilities with esoteric symbolism, the program invites users to explore the intersection of logic and intuition, structure and creativity.
 
-In a world of rapid change, chaos magic offers a unique paradigm, suited to navigating the challenges and opportunities of the modern age. Its ongoing evolution serves as a testament to humanity's quest to understand and influence the world, adapting ancient magical principles to our technological era.
-
-Peter J. Caroll's own website is a usefull resource ( https://www.specularium.org/ ).<br><br>
+Peter J. Caroll's own website is a usefull resource, https://www.specularium.org/ 
+<br><br>
 There is also a vast amount of literature on chaos magic in print and online.  Here are some good books:
 
 "Liber Null" (1978) by Peter J. Carroll:
