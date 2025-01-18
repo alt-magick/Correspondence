@@ -1,6 +1,6 @@
 # Correspondence
-A Magick Alphabet<br>
-Sigil Generator Coded with AI<br><br>
+Magick Alphabet<br>
+A Sigil Generator Coded with AI<br><br>
 https://sourceforge.net/projects/correspondence/ <br><br>
 To compile:  <br>
 * &nbsp; g++ -o correspondence.exe main.cpp -mwindows -lcomctl32 -static<br>
