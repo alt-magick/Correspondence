@@ -1,5 +1,5 @@
 # Correspondence
-Magick Alphabet<br>
+The Magick Alphabet<br>
 A Sigil Generator<br><br>
 Coded with AI<br><br>
 https://sourceforge.net/projects/correspondence/ <br><br>
