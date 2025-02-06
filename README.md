@@ -112,6 +112,9 @@ While not strictly a chaos magic text, this book explores many ideas resonant wi
 
 In recent years, authors have continued to expand and reinterpret chaos magic for the 21st century.
 
+"The Alphabet of Desire – A Method of Chaos Magick" (2016) by Anousen Leonte:
+This short book (around 25 pages) introduces a simple method for creating and using a personal Alphabet of Desire in chaos magick. It explains how to design unique symbols representing emotions, desires, or intentions and how to activate and use them in magical work.
+
 "The Chaos Protocols" (2016) by Gordon White:
 This work applies chaos magical principles to practical life concerns, particularly focusing on navigating the challenges of the modern world.
 
