@@ -1,4 +1,7 @@
-#include <gtk/gtk.h>
+static void on_text_changed(GtkTextBuffer *buffer, gpointer user_data) {
+        // Save state for certain operations
+        // This is a simplified version - you might want to be more selective
+    }#include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <string>
 #include <stack>
@@ -202,6 +205,33 @@ public:
         gtk_widget_destroy(dialog);
     }
     
+    // Static callback functions for GTK
+    static void on_open_activate(GtkWidget *widget, gpointer data) {
+        static_cast<CorrespondenceApp*>(data)->open_file();
+    }
+    
+    static void on_save_activate(GtkWidget *widget, gpointer data) {
+        static_cast<CorrespondenceApp*>(data)->save_file();
+    }
+    
+    static void on_quit_activate(GtkWidget *widget, gpointer data) {
+        gtk_main_quit();
+    }
+    
+    static void on_encode_activate(GtkWidget *widget, gpointer data) {
+        static_cast<CorrespondenceApp*>(data)->encode_text();
+    }
+    
+    static void on_decode_activate(GtkWidget *widget, gpointer data) {
+        static_cast<CorrespondenceApp*>(data)->decode_text();
+    }
+    
+    static void on_toggle_activate(GtkWidget *widget, gpointer data) {
+        CorrespondenceApp* app = static_cast<CorrespondenceApp*>(data);
+        app->enable_substitution = !app->enable_substitution;
+        app->update_status_bar();
+    }
+    
     static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
         CorrespondenceApp *app = static_cast<CorrespondenceApp*>(user_data);
         
@@ -260,11 +290,6 @@ public:
         return FALSE;
     }
     
-    static void on_text_changed(GtkTextBuffer *buffer, gpointer user_data) {
-        // Save state for certain operations
-        // This is a simplified version - you might want to be more selective
-    }
-    
     void create_menu_bar() {
         GtkWidget *menu_bar = gtk_menu_bar_new();
         
@@ -299,31 +324,12 @@ public:
         gtk_menu_shell_append(GTK_MENU_SHELL(menu_bar), code_item);
         
         // Connect signals
-        g_signal_connect(open_item, "activate", G_CALLBACK([](GtkWidget*, gpointer data) {
-            static_cast<CorrespondenceApp*>(data)->open_file();
-        }), this);
-        
-        g_signal_connect(save_item, "activate", G_CALLBACK([](GtkWidget*, gpointer data) {
-            static_cast<CorrespondenceApp*>(data)->save_file();
-        }), this);
-        
-        g_signal_connect(quit_item, "activate", G_CALLBACK([](GtkWidget*, gpointer) {
-            gtk_main_quit();
-        }), nullptr);
-        
-        g_signal_connect(encode_item, "activate", G_CALLBACK([](GtkWidget*, gpointer data) {
-            static_cast<CorrespondenceApp*>(data)->encode_text();
-        }), this);
-        
-        g_signal_connect(decode_item, "activate", G_CALLBACK([](GtkWidget*, gpointer data) {
-            static_cast<CorrespondenceApp*>(data)->decode_text();
-        }), this);
-        
-        g_signal_connect(toggle_item, "activate", G_CALLBACK([](GtkWidget*, gpointer data) {
-            CorrespondenceApp* app = static_cast<CorrespondenceApp*>(data);
-            app->enable_substitution = !app->enable_substitution;
-            app->update_status_bar();
-        }), this);
+        g_signal_connect(open_item, "activate", G_CALLBACK(on_open_activate), this);
+        g_signal_connect(save_item, "activate", G_CALLBACK(on_save_activate), this);
+        g_signal_connect(quit_item, "activate", G_CALLBACK(on_quit_activate), nullptr);
+        g_signal_connect(encode_item, "activate", G_CALLBACK(on_encode_activate), this);
+        g_signal_connect(decode_item, "activate", G_CALLBACK(on_decode_activate), this);
+        g_signal_connect(toggle_item, "activate", G_CALLBACK(on_toggle_activate), this);
         
         GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
         gtk_container_add(GTK_CONTAINER(window), vbox);
@@ -337,10 +343,14 @@ public:
         text_view = gtk_text_view_new();
         text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
         
-        // Set font
-        PangoFontDescription *font_desc = pango_font_description_from_string("Noto Color Emoji 16");
-        gtk_widget_override_font(text_view, font_desc);
-        pango_font_description_free(font_desc);
+        // Set font - using CSS provider for modern GTK
+        GtkCssProvider *css_provider = gtk_css_provider_new();
+        const gchar *css_data = "textview { font-family: 'Noto Color Emoji', 'Segoe UI Symbol', 'Apple Color Emoji'; font-size: 16px; }";
+        gtk_css_provider_load_from_data(css_provider, css_data, -1, NULL);
+        
+        GtkStyleContext *context = gtk_widget_get_style_context(text_view);
+        gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+        g_object_unref(css_provider);
         
         gtk_container_add(GTK_CONTAINER(scrolled), text_view);
         gtk_box_pack_start(GTK_BOX(vbox), scrolled, TRUE, TRUE, 0);
@@ -358,10 +368,14 @@ public:
         gtk_window_set_title(GTK_WINDOW(window), "Correspondence");
         gtk_window_set_default_size(GTK_WINDOW(window), 480, 640);
         
-        // Position window on the right side of screen
-        GdkScreen *screen = gtk_window_get_screen(GTK_WINDOW(window));
-        gint screen_width = gdk_screen_get_width(screen);
-        gint screen_height = gdk_screen_get_height(screen);
+        // Position window on the right side of screen - modern approach
+        GdkDisplay *display = gdk_display_get_default();
+        GdkMonitor *monitor = gdk_display_get_primary_monitor(display);
+        GdkRectangle geometry;
+        gdk_monitor_get_geometry(monitor, &geometry);
+        
+        gint screen_width = geometry.width;
+        gint screen_height = geometry.height;
         gtk_window_move(GTK_WINDOW(window), screen_width - 500, (screen_height - 640) / 2);
         
         create_menu_bar();
