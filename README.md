@@ -132,11 +132,6 @@ Deepen your practice with the foundational works:
 
 Released under the **Chaos License**: *Do what works. Credit what helps. Share what serves.*
 
----
-
-*Coded with AI assistance, blessed by digital spirits, and offered to the collective unconscious of the GitHub-verse.*
-
-**Repository Portal**: `https://sourceforge.net/projects/correspondence/`
 
 ---
 
