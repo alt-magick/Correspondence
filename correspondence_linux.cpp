@@ -1,7 +1,4 @@
-static void on_text_changed(GtkTextBuffer *buffer, gpointer user_data) {
-        // Save state for certain operations
-        // This is a simplified version - you might want to be more selective
-    }#include <gtk/gtk.h>
+#include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <string>
 #include <stack>
