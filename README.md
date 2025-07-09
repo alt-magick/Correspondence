@@ -3,9 +3,16 @@ The Magick Alphabet<br>
 A Sigil Generator<br><br>
 Coded with AI<br><br>
 https://sourceforge.net/projects/correspondence/ <br><br>
-To compile:  <br>
+To compile on windows:  <br>
 * &nbsp; g++ -o correspondence.exe main.cpp -mwindows -lcomctl32 -static<br>
 * &nbsp; Or, create an empty Visual Studio project and compile main.cpp<br>
+To compile on Linux (debian base):
+* &nbsp; sudo apt install libgtk-3-dev
+* &nbsp; g++ -o correspondence correspondence_linux.cpp `pkg-config --cflags --libs gtk+-3.0`
+* &nbsp; ./correspondence
+To run directly with python:
+* &nbsp; sudo apt install python3-tk
+* &nbsp; python3 correspondence.py
 
 Correspondence is a text editor that toggles between sigils or normal text, and can encode and decode selected text in a file. It uses an astrology cipher as a magical alphabet, which was outlined by Peter J. Carroll in the books "Liber Null" and "Psychonaut".<br>
 
