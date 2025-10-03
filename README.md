@@ -36,6 +36,14 @@ X / Capricorn: ♑︎<br>
 Y / Aquarius: ♒︎<br>
 Z / Pisces: ♓︎<br>
 <br>
+
+A new version of this program is available for Linux, and a cross platform Python program as a fork of this project here:
+<br>
+
+https://github.com/djehutyy/Correspondence
+
+<br>
+
 # Chaos Magick
 At its core, chaos magic diverges radically from traditional systems, offering a flexible framework leveraging belief as a tool for personal and reality transformation.
 
