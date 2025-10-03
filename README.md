@@ -37,7 +37,7 @@ Y / Aquarius: ♒︎<br>
 Z / Pisces: ♓︎<br>
 <br>
 
-A new version of this program is available for Linux, and a cross platform Python program as a fork of this project here:
+A new version of this program is available for Linux and Python, as a fork of this project:
 <br>
 
 https://github.com/djehutyy/Correspondence
