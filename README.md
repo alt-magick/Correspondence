@@ -1,6 +1,6 @@
 # Correspondence
 The Magick Alphabet<br>
-A Sigil Generator<br><br>
+A Magic Sigil Generator<br><br>
 Coded with AI<br><br>
 https://sourceforge.net/projects/correspondence/ <br><br>
 To compile:  <br>
