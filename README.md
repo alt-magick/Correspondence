@@ -44,6 +44,16 @@ https://github.com/djehutyy/Correspondence
 
 <br>
 
+There is a live online web version at <br>
+
+https://diskdash.com/cipher.html
+
+<br>
+
+The source is in editor.html
+
+<br>
+
 # Chaos Magick
 At its core, chaos magic diverges radically from traditional systems, offering a flexible framework leveraging belief as a tool for personal and reality transformation.
 
