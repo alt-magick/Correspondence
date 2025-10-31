@@ -20,8 +20,8 @@
   /* Bigger text box */
   #textBox {
     display:block;
-    width:90%;             /* Increased from 70% to 90% */
-    max-width:900px;       /* Wider max width */
+    width:90%;
+    max-width:900px;
     margin:30px auto;
     padding:25px;
     border:2px solid #aaa;
@@ -207,26 +207,47 @@ function loadCipherFromFile(file) {
   reader.readAsText(file);
 }
 
-function transformText(reverse = false) {
+// 🔄 Encode/Decode function (supports selection)
+function transformSelection(reverse = false) {
   const map = getMapping(reverse);
+  const start = textBox.selectionStart;
+  const end = textBox.selectionEnd;
+  let input = textBox.value;
+
+  // If text is selected, only transform that portion
+  const hasSelection = start !== end;
+  const targetText = hasSelection ? input.slice(start, end) : input;
+
   let result = '';
-  const input = textBox.value;
 
   if (reverse) {
+    // Decode
     const symbols = Object.keys(map).sort((a, b) => b.length - a.length);
-    let temp = input;
+    let temp = targetText;
     while (temp.length > 0) {
       const match = symbols.find(sym => temp.startsWith(sym));
       if (match) { result += map[match]; temp = temp.slice(match.length); }
       else { result += temp[0]; temp = temp.slice(1); }
     }
   } else {
-    for (const char of input) {
+    // Encode
+    for (const char of targetText) {
       const upper = char.toUpperCase();
-      result += alphabet.includes(upper) ? map[upper] || upper : char;
+      result += alphabet.includes(upper) ? (map[upper] || upper) : char;
     }
   }
-  textBox.value = result.toLowerCase();
+
+  // Replace selection or full text
+  if (hasSelection) {
+    const before = input.slice(0, start);
+    const after = input.slice(end);
+    textBox.value = before + result + after;
+    textBox.selectionStart = start;
+    textBox.selectionEnd = start + result.length;
+  } else {
+    textBox.value = result.toLowerCase();
+  }
+
   autoResize();
 }
 
@@ -270,8 +291,8 @@ textBox.addEventListener('beforeinput', function(e) {
 });
 
 // Event Listeners
-document.getElementById('encodeBtn').addEventListener('click', () => transformText(false));
-document.getElementById('decodeBtn').addEventListener('click', () => transformText(true));
+document.getElementById('encodeBtn').addEventListener('click', () => transformSelection(false));
+document.getElementById('decodeBtn').addEventListener('click', () => transformSelection(true));
 document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
 document.getElementById('resetBtn').addEventListener('click', () => loadMapping(defaultMapping));
 document.getElementById('saveFileBtn').addEventListener('click', saveCipherToFile);
