@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celestial Cipher Encoder / Decoder</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    margin:50px auto;
+    max-width:1000px;
+    background:#f7f7f7;
+    color:#222;
+    line-height:1.6;
+    padding:0 20px;
+  }
+  h1 { text-align:center; margin-bottom:30px; font-size:2.4em; }
+  p { text-align:center; font-size:1.2em; margin-bottom:25px; }
+
+  /* Bigger text box */
+  #textBox {
+    display:block;
+    width:90%;             /* Increased from 70% to 90% */
+    max-width:900px;       /* Wider max width */
+    margin:30px auto;
+    padding:25px;
+    border:2px solid #aaa;
+    border-radius:12px;
+    font-size:3em;
+    min-height:220px;
+    resize:none;
+    box-sizing:border-box;
+    background:#fff;
+    overflow:hidden;
+    box-shadow:0 4px 8px rgba(0,0,0,0.05);
+  }
+
+  #gridContainer {
+    margin-bottom:30px;
+    padding:20px;
+    border:1px solid #ccc;
+    border-radius:12px;
+    background:#fff;
+    box-shadow:0 3px 6px rgba(0,0,0,0.05);
+    overflow:hidden;
+  }
+
+  .grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(120px,1fr));
+    gap:16px 14px;
+  }
+
+  .pair {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#fff;
+    padding:16px 12px;
+    border-radius:10px;
+    font-size:28px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.08);
+  }
+
+  .pair span {
+    font-weight:bold;
+    font-size:28px;
+    width:40px;
+    text-align:center;
+  }
+
+  .pair input {
+    width:100%;
+    max-width:120px;
+    height:70px;
+    font-size:2em;
+    text-align:center;
+    border:1px solid #bbb;
+    border-radius:8px;
+    background:#fdfdfd;
+    padding:5px;
+    box-sizing:border-box;
+  }
+
+  .pair input:focus {
+    border-color:#4CAF50;
+    box-shadow:0 0 8px rgba(76,175,80,0.5);
+    outline:none;
+  }
+
+  button {
+    background:#4CAF50;
+    color:white;
+    border:none;
+    padding:14px 30px;
+    border-radius:10px;
+    font-size:18px;
+    cursor:pointer;
+    margin:10px;
+    transition: background 0.2s;
+  }
+
+  button:hover { background:#45a049; }
+  .buttons { text-align:center; margin-top:20px; margin-bottom:30px; flex-wrap:wrap; }
+
+  #resetBtn { background:#2196F3; }
+  #resetBtn:hover { background:#1c85d8; }
+
+  #copyBtn { background:#FF9800; }
+  #copyBtn:hover { background:#e68900; }
+
+  #saveFileBtn { background:#9C27B0; }
+  #saveFileBtn:hover { background:#7b1fa2; }
+
+  #loadFileBtn { background:#FF5722; }
+  #loadFileBtn:hover { background:#e64a19; }
+
+  #toggleModeBtn { background:#607D8B; }
+  #toggleModeBtn.active { background:#009688; }
+</style>
+</head>
+<body>
+
+<h1>🌞 Celestial Cipher Encoder / Decoder 🌙</h1>
+<p>Each letter corresponds to a celestial or astrological symbol:</p>
+
+<div id="gridContainer">
+  <div class="grid" id="mappingGrid"></div>
+</div>
+
+<div class="buttons">
+  <button id="resetBtn">🔁 Reset to Default</button>
+  <button id="saveFileBtn">💾 Save Cipher to File</button>
+  <button id="loadFileBtn">📂 Load Cipher from File</button>
+  <input type="file" id="fileInput" style="display:none;" accept=".json">
+</div>
+
+<div class="buttons">
+  <button id="toggleModeBtn">🖊️ Mode: Normal Text</button>
+</div>
+
+<textarea id="textBox" placeholder="Enter or paste your text here..."></textarea>
+
+<div class="buttons">
+  <button id="encodeBtn">🔒 Encode</button>
+  <button id="decodeBtn">🔓 Decode</button>
+  <button id="copyBtn">📋 Copy to Clipboard</button>
+</div>
+
+<script>
+const grid = document.getElementById('mappingGrid');
+const textBox = document.getElementById('textBox');
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const fileInput = document.getElementById('fileInput');
+const toggleBtn = document.getElementById('toggleModeBtn');
+let cipherMode = false;
+
+// Default cipher mapping
+const defaultMapping = {
+  A: '☉', B: '●', C: '☾', D: '☽', E: '○', F: '☿', G: '♀', H: '♁',
+  I: '♂', J: '♃', K: '♄', L: '♅', M: '♆', N: '♇', O: '♈︎', P: '♉︎',
+  Q: '♊︎', R: '♋︎', S: '♌︎', T: '♍︎', U: '♎︎', V: '♏︎', W: '♐︎',
+  X: '♑︎', Y: '♒︎', Z: '♓︎'
+};
+
+// Build grid
+alphabet.forEach(letter => {
+  const div = document.createElement('div');
+  div.classList.add('pair');
+  div.innerHTML = `<span>${letter}</span><input type="text" maxlength="3" id="map_${letter}" placeholder="?">`;
+  grid.appendChild(div);
+});
+
+function loadMapping(map = defaultMapping) {
+  alphabet.forEach(letter => {
+    document.getElementById(`map_${letter}`).value = map[letter] || '';
+  });
+}
+
+function getMapping(reverse = false) {
+  const map = {};
+  alphabet.forEach(letter => {
+    const val = document.getElementById(`map_${letter}`).value.trim();
+    if (val) reverse ? map[val] = letter : map[letter] = val;
+  });
+  return map;
+}
+
+function saveCipherToFile() {
+  const map = getMapping(false);
+  const blob = new Blob([JSON.stringify(map, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'cipher.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function loadCipherFromFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const map = JSON.parse(e.target.result);
+      loadMapping(map);
+    } catch { alert("Invalid cipher file."); }
+  };
+  reader.readAsText(file);
+}
+
+function transformText(reverse = false) {
+  const map = getMapping(reverse);
+  let result = '';
+  const input = textBox.value;
+
+  if (reverse) {
+    const symbols = Object.keys(map).sort((a, b) => b.length - a.length);
+    let temp = input;
+    while (temp.length > 0) {
+      const match = symbols.find(sym => temp.startsWith(sym));
+      if (match) { result += map[match]; temp = temp.slice(match.length); }
+      else { result += temp[0]; temp = temp.slice(1); }
+    }
+  } else {
+    for (const char of input) {
+      const upper = char.toUpperCase();
+      result += alphabet.includes(upper) ? map[upper] || upper : char;
+    }
+  }
+  textBox.value = result.toLowerCase();
+  autoResize();
+}
+
+function copyToClipboard() {
+  navigator.clipboard.writeText(textBox.value);
+  alert("Copied to clipboard!");
+}
+
+function autoResize() {
+  textBox.style.height = 'auto';
+  textBox.style.height = textBox.scrollHeight + 'px';
+}
+
+// --- Toggle Mode ---
+function toggleCipherMode() {
+  cipherMode = !cipherMode;
+  if (cipherMode) {
+    toggleBtn.classList.add('active');
+    toggleBtn.textContent = "🖊️ Mode: Cipher Typing";
+  } else {
+    toggleBtn.classList.remove('active');
+    toggleBtn.textContent = "🖊️ Mode: Normal Text";
+  }
+}
+
+// --- Cipher Typing ---
+textBox.addEventListener('beforeinput', function(e) {
+  if (!cipherMode) return;
+  if (e.inputType === 'insertText' && e.data) {
+    const map = getMapping(false);
+    const char = e.data;
+    const upper = char.toUpperCase();
+    const cipherChar = alphabet.includes(upper) ? (map[upper] || upper) : char;
+    const start = this.selectionStart;
+    const end = this.selectionEnd;
+    const text = this.value;
+    this.value = text.slice(0, start) + cipherChar + text.slice(end);
+    this.selectionStart = this.selectionEnd = start + cipherChar.length;
+    e.preventDefault();
+  }
+});
+
+// Event Listeners
+document.getElementById('encodeBtn').addEventListener('click', () => transformText(false));
+document.getElementById('decodeBtn').addEventListener('click', () => transformText(true));
+document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
+document.getElementById('resetBtn').addEventListener('click', () => loadMapping(defaultMapping));
+document.getElementById('saveFileBtn').addEventListener('click', saveCipherToFile);
+document.getElementById('loadFileBtn').addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => e.target.files.length && loadCipherFromFile(e.target.files[0]));
+toggleBtn.addEventListener('click', toggleCipherMode);
+
+// Init
+loadMapping();
+autoResize();
+</script>
+</body>
+</html>
