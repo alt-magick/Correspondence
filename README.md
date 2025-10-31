@@ -42,13 +42,10 @@ A new version of this program is available for Linux and Python, as a fork of th
 
 https://github.com/djehutyy/Correspondence
 
-<br>
-
 There is a live web version at <br>
 
 https://diskdash.com/cipher.html
 
-<br>
 The source is in editor.html
 
 <br>
