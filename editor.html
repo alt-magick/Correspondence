@@ -142,7 +142,6 @@
   <button id="toggleModeBtn">🖊️ Mode: Normal Text</button>
 </div>
 
-<!-- Empty text box -->
 <textarea id="textBox"></textarea>
 
 <div class="buttons">
@@ -158,6 +157,9 @@ const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const fileInput = document.getElementById('fileInput');
 const toggleBtn = document.getElementById('toggleModeBtn');
 let cipherMode = false;
+
+// Hidden plaintext buffer to support autocomplete
+let plaintextBuffer = '';
 
 const defaultMapping = {
   A: '☉', B: '●', C: '☾', D: '☽', E: '○', F: '☿', G: '♀', H: '♁',
@@ -229,8 +231,8 @@ function transformSelection(reverse = false) {
     let temp = targetText;
     while (temp.length > 0) {
       const match = symbols.find(sym => temp.startsWith(sym));
-      if (match) { result += map[match]; temp = temp.slice(match.length); }
-      else { result += temp[0]; temp = temp.slice(1); }
+      if (match) { result += map[match].toLowerCase(); temp = temp.slice(match.length); }
+      else { result += temp[0].toLowerCase(); temp = temp.slice(1); }
     }
   } else {
     for (const char of targetText) {
@@ -248,6 +250,7 @@ function transformSelection(reverse = false) {
   } else {
     textBox.value = result;
   }
+  plaintextBuffer = reverse ? result : textBox.value; // sync buffer
   autoResize();
 }
 
@@ -255,10 +258,9 @@ function copyToClipboard() {
   navigator.clipboard.writeText(textBox.value);
 }
 
-// 💡 Auto-resize both when typing & deleting
 function autoResize() {
-  textBox.style.height = 'auto'; // reset height
-  textBox.style.height = textBox.scrollHeight + 'px'; // set to new height
+  textBox.style.height = 'auto';
+  textBox.style.height = textBox.scrollHeight + 'px';
 }
 
 function toggleCipherMode() {
@@ -272,25 +274,34 @@ function toggleCipherMode() {
   }
 }
 
-// Cipher typing
+// Cipher typing with autocomplete support
 textBox.addEventListener('beforeinput', function(e) {
   if (!cipherMode) return;
-  if (e.inputType === 'insertText' && e.data) {
+  if (e.inputType === 'insertText' || e.inputType === 'insertReplacementText') {
     const map = getMapping(false);
-    const char = e.data;
-    const upper = char.toUpperCase();
-    const cipherChar = alphabet.includes(upper) ? (map[upper] || upper) : char;
+    const insertedText = e.data || '';
     const start = this.selectionStart;
     const end = this.selectionEnd;
-    const text = this.value;
-    this.value = text.slice(0, start) + cipherChar + text.slice(end);
-    this.selectionStart = this.selectionEnd = start + cipherChar.length;
+
+    // Update plaintext buffer
+    plaintextBuffer = plaintextBuffer.slice(0, start) + insertedText + plaintextBuffer.slice(end);
+
+    // Convert inserted text to cipher
+    let cipherText = '';
+    for (const char of insertedText) {
+      const upper = char.toUpperCase();
+      cipherText += alphabet.includes(upper) ? (map[upper] || char) : char;
+    }
+
+    // Update textarea
+    this.value = this.value.slice(0, start) + cipherText + this.value.slice(end);
+    this.selectionStart = this.selectionEnd = start + cipherText.length;
+
     e.preventDefault();
     autoResize();
   }
 });
 
-// Auto expand and shrink dynamically while typing, pasting, deleting
 textBox.addEventListener('input', autoResize);
 
 document.getElementById('encodeBtn').addEventListener('click', () => transformSelection(false));
@@ -303,6 +314,7 @@ fileInput.addEventListener('change', e => e.target.files.length && loadCipherFro
 toggleBtn.addEventListener('click', toggleCipherMode);
 
 loadMapping();
+plaintextBuffer = textBox.value;
 autoResize();
 </script>
 </body>
