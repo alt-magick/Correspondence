@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -15,8 +15,23 @@
     padding:0 20px;
   }
 
-  h1 { text-align:center; margin-bottom:30px; font-size:2.4em; }
-  p { text-align:center; font-size:1.2em; margin-bottom:25px; }
+  h1 { 
+    text-align:center; 
+    margin-bottom:30px; 
+    font-size:2.4em; 
+  }
+
+  /* Responsive link at the top */
+  p a {
+    display: block;               /* Full-width */
+    width: 100%;
+    word-wrap: break-word;        /* Wrap long URLs */
+    font-size: clamp(1em, 4vw, 1.5em); /* Responsive font size */
+    text-align: center;
+    text-decoration: none;
+    color: #1a0dab;
+    margin-bottom: 25px;
+  }
 
   #textBox {
     display:block;
@@ -141,7 +156,7 @@
 <body>
 
 <h1>Chaos Magic Sigil Generator</h1>
-<p><a href="https://github.com/alt-magick/Correspondence/">https://github.com/alt-magick/Correspondence/</a></p>
+<p><a href="https://github.com/alt-magick/Correspondence/" target="_blank">https://github.com/alt-magick/Correspondence/</a></p>
 
 <div id="gridContainer">
   <div class="grid" id="mappingGrid"></div>
@@ -166,7 +181,6 @@
   <button id="copyBtn">📋 Copy (Ctrl+C)</button>
 </div>
 
-<!-- Shortcuts wrapped in flex container -->
 <div class="shortcuts-wrapper">
   <div class="shortcuts">
     <strong>Keyboard Shortcuts:</strong><br>
@@ -177,6 +191,7 @@
 </div>
 
 <script>
+// All your existing JavaScript code remains unchanged
 const grid = document.getElementById('mappingGrid');
 const textBox = document.getElementById('textBox');
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -191,7 +206,6 @@ const defaultMapping = {
   X: '♑︎', Y: '♒︎', Z: '♓︎'
 };
 
-// Build mapping grid
 alphabet.forEach(letter => {
   const div = document.createElement('div');
   div.classList.add('pair');
@@ -258,13 +272,11 @@ function transformText(input, reverse=false) {
   }
 }
 
-// Auto resize
 function autoResize() {
   textBox.style.height = 'auto';
   textBox.style.height = textBox.scrollHeight+'px';
 }
 
-// Copy (selection-aware)
 function copyToClipboard() {
   const start = textBox.selectionStart;
   const end = textBox.selectionEnd;
@@ -282,7 +294,6 @@ function copyToClipboard() {
     .catch(err => console.error('Clipboard copy failed:', err));
 }
 
-// Toggle mode
 function toggleCipherMode() {
   cipherMode = !cipherMode;
   if(cipherMode){
@@ -296,7 +307,6 @@ function toggleCipherMode() {
   }
 }
 
-// Typing in cipher mode
 textBox.addEventListener('beforeinput', function(e){
   if(!cipherMode) return;
   if(e.inputType==='insertText' && e.data){
@@ -312,7 +322,6 @@ textBox.addEventListener('beforeinput', function(e){
   }
 });
 
-// Encode (selection-aware)
 document.getElementById('encodeBtn').addEventListener('click', () => {
   const start = textBox.selectionStart;
   const end = textBox.selectionEnd;
@@ -331,7 +340,6 @@ document.getElementById('encodeBtn').addEventListener('click', () => {
   autoResize();
 });
 
-// Decode (selection-aware)
 document.getElementById('decodeBtn').addEventListener('click', () => {
   const start = textBox.selectionStart;
   const end = textBox.selectionEnd;
@@ -350,7 +358,6 @@ document.getElementById('decodeBtn').addEventListener('click', () => {
   autoResize();
 });
 
-// Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && !e.shiftKey && !e.altKey) {
     const key = e.key.toLowerCase();
@@ -369,7 +376,6 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Button bindings
 document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
 document.getElementById('resetBtn').addEventListener('click',()=>loadMapping(defaultMapping));
 document.getElementById('saveFileBtn').addEventListener('click',saveCipherToFile);
