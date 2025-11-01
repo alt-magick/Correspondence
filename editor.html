@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -119,6 +119,23 @@
 
   #toggleModeBtn { background:#607D8B; }
   #toggleModeBtn.active { background:#009688; }
+
+  /* Shortcuts styling - centered using flex */
+  .shortcuts-wrapper {
+    display: flex;
+    justify-content: center;
+    margin:40px 0 20px;
+  }
+
+  .shortcuts {
+    text-align:center;
+    font-size:1em;
+    background:#fff;
+    padding:12px 20px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);
+    color:#333;
+  }
 </style>
 </head>
 <body>
@@ -144,9 +161,19 @@
 <textarea id="textBox" autocomplete="off"></textarea>
 
 <div class="buttons">
-  <button id="encodeBtn">🔒 Encode</button>
-  <button id="decodeBtn">🔓 Decode</button>
-  <button id="copyBtn">📋 Copy to Clipboard</button>
+  <button id="encodeBtn">🔒 Encode (Ctrl+E)</button>
+  <button id="decodeBtn">🔓 Decode (Ctrl+D)</button>
+  <button id="copyBtn">📋 Copy (Ctrl+C)</button>
+</div>
+
+<!-- Shortcuts wrapped in flex container -->
+<div class="shortcuts-wrapper">
+  <div class="shortcuts">
+    <strong>Keyboard Shortcuts:</strong><br>
+    🖋️ <b>Ctrl + E</b> → Encode selected text<br>
+    🔓 <b>Ctrl + D</b> → Decode selected text<br>
+    📋 <b>Ctrl + C</b> → Copy selected text
+  </div>
 </div>
 
 <script>
@@ -237,8 +264,23 @@ function autoResize() {
   textBox.style.height = textBox.scrollHeight+'px';
 }
 
-// Copy
-function copyToClipboard() { navigator.clipboard.writeText(textBox.value); }
+// Copy (selection-aware)
+function copyToClipboard() {
+  const start = textBox.selectionStart;
+  const end = textBox.selectionEnd;
+  const textToCopy = (start !== end)
+    ? textBox.value.slice(start, end)
+    : textBox.value;
+
+  navigator.clipboard.writeText(textToCopy)
+    .then(() => {
+      const btn = document.getElementById('copyBtn');
+      const old = btn.textContent;
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = old, 1000);
+    })
+    .catch(err => console.error('Clipboard copy failed:', err));
+}
 
 // Toggle mode
 function toggleCipherMode() {
@@ -246,7 +288,7 @@ function toggleCipherMode() {
   if(cipherMode){
     toggleBtn.classList.add('active');
     toggleBtn.textContent="🖊️ Mode: Cipher Typing";
-    textBox.setAttribute('autocomplete','off'); // disable autocomplete
+    textBox.setAttribute('autocomplete','off');
   } else {
     toggleBtn.classList.remove('active');
     toggleBtn.textContent="🖊️ Mode: Normal Text";
@@ -270,10 +312,65 @@ textBox.addEventListener('beforeinput', function(e){
   }
 });
 
-// Buttons
-document.getElementById('encodeBtn').addEventListener('click',()=>{ textBox.value=transformText(textBox.value,false); autoResize(); });
-document.getElementById('decodeBtn').addEventListener('click',()=>{ textBox.value=transformText(textBox.value,true); autoResize(); });
-document.getElementById('copyBtn').addEventListener('click',copyToClipboard);
+// Encode (selection-aware)
+document.getElementById('encodeBtn').addEventListener('click', () => {
+  const start = textBox.selectionStart;
+  const end = textBox.selectionEnd;
+  const text = textBox.value;
+
+  if (start !== end) {
+    const selected = text.slice(start, end);
+    const transformed = transformText(selected, false);
+    textBox.value = text.slice(0, start) + transformed + text.slice(end);
+    textBox.selectionStart = start;
+    textBox.selectionEnd = start + transformed.length;
+  } else {
+    textBox.value = transformText(text, false);
+  }
+
+  autoResize();
+});
+
+// Decode (selection-aware)
+document.getElementById('decodeBtn').addEventListener('click', () => {
+  const start = textBox.selectionStart;
+  const end = textBox.selectionEnd;
+  const text = textBox.value;
+
+  if (start !== end) {
+    const selected = text.slice(start, end);
+    const transformed = transformText(selected, true);
+    textBox.value = text.slice(0, start) + transformed + text.slice(end);
+    textBox.selectionStart = start;
+    textBox.selectionEnd = start + transformed.length;
+  } else {
+    textBox.value = transformText(text, true);
+  }
+
+  autoResize();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && !e.shiftKey && !e.altKey) {
+    const key = e.key.toLowerCase();
+    if (key === 'e') {
+      e.preventDefault();
+      document.getElementById('encodeBtn').click();
+    }
+    if (key === 'd') {
+      e.preventDefault();
+      document.getElementById('decodeBtn').click();
+    }
+    if (key === 'c') {
+      e.preventDefault();
+      copyToClipboard();
+    }
+  }
+});
+
+// Button bindings
+document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
 document.getElementById('resetBtn').addEventListener('click',()=>loadMapping(defaultMapping));
 document.getElementById('saveFileBtn').addEventListener('click',saveCipherToFile);
 document.getElementById('loadFileBtn').addEventListener('click',()=>fileInput.click());
