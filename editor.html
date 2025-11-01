@@ -18,7 +18,6 @@
   h1 { text-align:center; margin-bottom:30px; font-size:2.4em; }
   p { text-align:center; font-size:1.2em; margin-bottom:25px; }
 
-  /* Larger auto-expanding text box */
   #textBox {
     display:block;
     width:90%;
@@ -142,7 +141,7 @@
   <button id="toggleModeBtn">🖊️ Mode: Normal Text</button>
 </div>
 
-<textarea id="textBox"></textarea>
+<textarea id="textBox" autocomplete="off"></textarea>
 
 <div class="buttons">
   <button id="encodeBtn">🔒 Encode</button>
@@ -158,9 +157,6 @@ const fileInput = document.getElementById('fileInput');
 const toggleBtn = document.getElementById('toggleModeBtn');
 let cipherMode = false;
 
-// Hidden plaintext buffer to support autocomplete
-let plaintextBuffer = '';
-
 const defaultMapping = {
   A: '☉', B: '●', C: '☾', D: '☽', E: '○', F: '☿', G: '♀', H: '♁',
   I: '♂', J: '♃', K: '♄', L: '♅', M: '♆', N: '♇', O: '♈︎', P: '♉︎',
@@ -168,7 +164,7 @@ const defaultMapping = {
   X: '♑︎', Y: '♒︎', Z: '♓︎'
 };
 
-// Build the mapping grid
+// Build mapping grid
 alphabet.forEach(letter => {
   const div = document.createElement('div');
   div.classList.add('pair');
@@ -182,7 +178,7 @@ function loadMapping(map = defaultMapping) {
   });
 }
 
-function getMapping(reverse = false) {
+function getMapping(reverse=false) {
   const map = {};
   alphabet.forEach(letter => {
     const val = document.getElementById(`map_${letter}`).value.trim();
@@ -209,112 +205,82 @@ function saveCipherToFile() {
 function loadCipherFromFile(file) {
   const reader = new FileReader();
   reader.onload = e => {
-    try {
-      const map = JSON.parse(e.target.result);
-      loadMapping(map);
-    } catch { alert("Invalid cipher file."); }
+    try { const map = JSON.parse(e.target.result); loadMapping(map); }
+    catch { alert("Invalid cipher file."); }
   };
   reader.readAsText(file);
 }
 
-function transformSelection(reverse = false) {
+function transformText(input, reverse=false) {
   const map = getMapping(reverse);
-  const start = textBox.selectionStart;
-  const end = textBox.selectionEnd;
-  let input = textBox.value;
-  const hasSelection = start !== end;
-  const targetText = hasSelection ? input.slice(start, end) : input;
-  let result = '';
-
-  if (reverse) {
-    const symbols = Object.keys(map).sort((a, b) => b.length - a.length);
-    let temp = targetText;
-    while (temp.length > 0) {
-      const match = symbols.find(sym => temp.startsWith(sym));
-      if (match) { result += map[match].toLowerCase(); temp = temp.slice(match.length); }
-      else { result += temp[0].toLowerCase(); temp = temp.slice(1); }
+  if(reverse) {
+    const symbols = Object.keys(map).sort((a,b)=>b.length-a.length);
+    let temp = input;
+    let result = '';
+    while(temp.length>0) {
+      const match = symbols.find(sym=>temp.startsWith(sym));
+      if(match){ result += map[match].toLowerCase(); temp=temp.slice(match.length); }
+      else { result += temp[0]; temp=temp.slice(1); }
     }
+    return result;
   } else {
-    for (const char of targetText) {
-      const upper = char.toUpperCase();
-      result += alphabet.includes(upper) ? (map[upper] || upper) : char;
-    }
+    return input.split('').map(c => {
+      const upper = c.toUpperCase();
+      return alphabet.includes(upper)?(map[upper]||upper):c;
+    }).join('');
   }
-
-  if (hasSelection) {
-    const before = input.slice(0, start);
-    const after = input.slice(end);
-    textBox.value = before + result + after;
-    textBox.selectionStart = start;
-    textBox.selectionEnd = start + result.length;
-  } else {
-    textBox.value = result;
-  }
-  plaintextBuffer = reverse ? result : textBox.value; // sync buffer
-  autoResize();
 }
 
-function copyToClipboard() {
-  navigator.clipboard.writeText(textBox.value);
-}
-
+// Auto resize
 function autoResize() {
   textBox.style.height = 'auto';
-  textBox.style.height = textBox.scrollHeight + 'px';
+  textBox.style.height = textBox.scrollHeight+'px';
 }
 
+// Copy
+function copyToClipboard() { navigator.clipboard.writeText(textBox.value); }
+
+// Toggle mode
 function toggleCipherMode() {
   cipherMode = !cipherMode;
-  if (cipherMode) {
+  if(cipherMode){
     toggleBtn.classList.add('active');
-    toggleBtn.textContent = "🖊️ Mode: Cipher Typing";
+    toggleBtn.textContent="🖊️ Mode: Cipher Typing";
+    textBox.setAttribute('autocomplete','off'); // disable autocomplete
   } else {
     toggleBtn.classList.remove('active');
-    toggleBtn.textContent = "🖊️ Mode: Normal Text";
+    toggleBtn.textContent="🖊️ Mode: Normal Text";
+    textBox.setAttribute('autocomplete','on');
   }
 }
 
-// Cipher typing with autocomplete support
-textBox.addEventListener('beforeinput', function(e) {
-  if (!cipherMode) return;
-  if (e.inputType === 'insertText' || e.inputType === 'insertReplacementText') {
-    const map = getMapping(false);
-    const insertedText = e.data || '';
+// Typing in cipher mode
+textBox.addEventListener('beforeinput', function(e){
+  if(!cipherMode) return;
+  if(e.inputType==='insertText' && e.data){
+    const char = e.data;
+    const cipherChar = transformText(char,false);
     const start = this.selectionStart;
     const end = this.selectionEnd;
-
-    // Update plaintext buffer
-    plaintextBuffer = plaintextBuffer.slice(0, start) + insertedText + plaintextBuffer.slice(end);
-
-    // Convert inserted text to cipher
-    let cipherText = '';
-    for (const char of insertedText) {
-      const upper = char.toUpperCase();
-      cipherText += alphabet.includes(upper) ? (map[upper] || char) : char;
-    }
-
-    // Update textarea
-    this.value = this.value.slice(0, start) + cipherText + this.value.slice(end);
-    this.selectionStart = this.selectionEnd = start + cipherText.length;
-
+    const text = this.value;
+    this.value = text.slice(0,start)+cipherChar+text.slice(end);
+    this.selectionStart = this.selectionEnd = start+cipherChar.length;
     e.preventDefault();
     autoResize();
   }
 });
 
-textBox.addEventListener('input', autoResize);
-
-document.getElementById('encodeBtn').addEventListener('click', () => transformSelection(false));
-document.getElementById('decodeBtn').addEventListener('click', () => transformSelection(true));
-document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
-document.getElementById('resetBtn').addEventListener('click', () => loadMapping(defaultMapping));
-document.getElementById('saveFileBtn').addEventListener('click', saveCipherToFile);
-document.getElementById('loadFileBtn').addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', e => e.target.files.length && loadCipherFromFile(e.target.files[0]));
-toggleBtn.addEventListener('click', toggleCipherMode);
+// Buttons
+document.getElementById('encodeBtn').addEventListener('click',()=>{ textBox.value=transformText(textBox.value,false); autoResize(); });
+document.getElementById('decodeBtn').addEventListener('click',()=>{ textBox.value=transformText(textBox.value,true); autoResize(); });
+document.getElementById('copyBtn').addEventListener('click',copyToClipboard);
+document.getElementById('resetBtn').addEventListener('click',()=>loadMapping(defaultMapping));
+document.getElementById('saveFileBtn').addEventListener('click',saveCipherToFile);
+document.getElementById('loadFileBtn').addEventListener('click',()=>fileInput.click());
+fileInput.addEventListener('change', e=>e.target.files.length&&loadCipherFromFile(e.target.files[0]));
+toggleBtn.addEventListener('click',toggleCipherMode);
 
 loadMapping();
-plaintextBuffer = textBox.value;
 autoResize();
 </script>
 </body>
