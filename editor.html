@@ -14,24 +14,29 @@
     line-height:1.6;
     padding:0 20px;
   }
+
   h1 { text-align:center; margin-bottom:30px; font-size:2.4em; }
   p { text-align:center; font-size:1.2em; margin-bottom:25px; }
+
+  /* Bigger text box + font */
   #textBox {
     display:block;
     width:90%;
     max-width:900px;
     margin:30px auto;
-    padding:25px;
+    padding:30px;
     border:2px solid #aaa;
     border-radius:12px;
-    font-size:3em;
-    min-height:220px;
+    font-size:4em;             
+    line-height:1.4em;         
+    min-height:260px;          
     resize:none;
     box-sizing:border-box;
     background:#fff;
     overflow:hidden;
     box-shadow:0 4px 8px rgba(0,0,0,0.05);
   }
+
   #gridContainer {
     margin-bottom:30px;
     padding:20px;
@@ -41,11 +46,13 @@
     box-shadow:0 3px 6px rgba(0,0,0,0.05);
     overflow:hidden;
   }
+
   .grid {
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(120px,1fr));
     gap:16px 14px;
   }
+
   .pair {
     display:flex;
     align-items:center;
@@ -56,12 +63,14 @@
     font-size:28px;
     box-shadow:0 2px 4px rgba(0,0,0,0.08);
   }
+
   .pair span {
     font-weight:bold;
     font-size:28px;
     width:40px;
     text-align:center;
   }
+
   .pair input {
     width:100%;
     max-width:120px;
@@ -74,11 +83,13 @@
     padding:5px;
     box-sizing:border-box;
   }
+
   .pair input:focus {
     border-color:#4CAF50;
     box-shadow:0 0 8px rgba(76,175,80,0.5);
     outline:none;
   }
+
   button {
     background:#4CAF50;
     color:white;
@@ -90,16 +101,22 @@
     margin:10px;
     transition: background 0.2s;
   }
+
   button:hover { background:#45a049; }
   .buttons { text-align:center; margin-top:20px; margin-bottom:30px; flex-wrap:wrap; }
+
   #resetBtn { background:#2196F3; }
   #resetBtn:hover { background:#1c85d8; }
+
   #copyBtn { background:#FF9800; }
   #copyBtn:hover { background:#e68900; }
+
   #saveFileBtn { background:#9C27B0; }
   #saveFileBtn:hover { background:#7b1fa2; }
+
   #loadFileBtn { background:#FF5722; }
   #loadFileBtn:hover { background:#e64a19; }
+
   #toggleModeBtn { background:#607D8B; }
   #toggleModeBtn.active { background:#009688; }
 </style>
@@ -124,7 +141,8 @@
   <button id="toggleModeBtn">🖊️ Mode: Normal Text</button>
 </div>
 
-<textarea id="textBox" placeholder="Enter or paste your text here..."></textarea>
+<!-- 🧾 Text area now completely empty -->
+<textarea id="textBox"></textarea>
 
 <div class="buttons">
   <button id="encodeBtn">🔒 Encode</button>
@@ -140,7 +158,6 @@ const fileInput = document.getElementById('fileInput');
 const toggleBtn = document.getElementById('toggleModeBtn');
 let cipherMode = false;
 
-// Default mapping
 const defaultMapping = {
   A: '☉', B: '●', C: '☾', D: '☽', E: '○', F: '☿', G: '♀', H: '♁',
   I: '♂', J: '♃', K: '♄', L: '♅', M: '♆', N: '♇', O: '♈︎', P: '♉︎',
@@ -171,7 +188,6 @@ function getMapping(reverse = false) {
   return map;
 }
 
-// ✅ Clean Firefox-compatible save (with default "cipher.json")
 function saveCipherToFile() {
   const map = getMapping(false);
   const blob = new Blob([JSON.stringify(map, null, 2)], { type: 'application/json' });
@@ -231,7 +247,7 @@ function transformSelection(reverse = false) {
     textBox.selectionStart = start;
     textBox.selectionEnd = start + result.length;
   } else {
-    textBox.value = result.toLowerCase();
+    textBox.value = result;
   }
   autoResize();
 }
@@ -272,7 +288,6 @@ textBox.addEventListener('beforeinput', function(e) {
   }
 });
 
-// Event listeners
 document.getElementById('encodeBtn').addEventListener('click', () => transformSelection(false));
 document.getElementById('decodeBtn').addEventListener('click', () => transformSelection(true));
 document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
@@ -282,7 +297,6 @@ document.getElementById('loadFileBtn').addEventListener('click', () => fileInput
 fileInput.addEventListener('change', e => e.target.files.length && loadCipherFromFile(e.target.files[0]));
 toggleBtn.addEventListener('click', toggleCipherMode);
 
-// Init
 loadMapping();
 autoResize();
 </script>
