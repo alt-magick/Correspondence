@@ -18,7 +18,7 @@
   h1 { text-align:center; margin-bottom:30px; font-size:2.4em; }
   p { text-align:center; font-size:1.2em; margin-bottom:25px; }
 
-  /* Bigger text box + font */
+  /* Larger auto-expanding text box */
   #textBox {
     display:block;
     width:90%;
@@ -27,14 +27,15 @@
     padding:30px;
     border:2px solid #aaa;
     border-radius:12px;
-    font-size:4em;             
-    line-height:1.4em;         
-    min-height:260px;          
+    font-size:4em;
+    line-height:1.4em;
+    min-height:260px;
     resize:none;
     box-sizing:border-box;
     background:#fff;
     overflow:hidden;
     box-shadow:0 4px 8px rgba(0,0,0,0.05);
+    transition: height 0.1s ease-out;
   }
 
   #gridContainer {
@@ -141,7 +142,7 @@
   <button id="toggleModeBtn">🖊️ Mode: Normal Text</button>
 </div>
 
-<!-- 🧾 Text area now completely empty -->
+<!-- Empty text box -->
 <textarea id="textBox"></textarea>
 
 <div class="buttons">
@@ -165,7 +166,7 @@ const defaultMapping = {
   X: '♑︎', Y: '♒︎', Z: '♓︎'
 };
 
-// Build grid
+// Build the mapping grid
 alphabet.forEach(letter => {
   const div = document.createElement('div');
   div.classList.add('pair');
@@ -191,11 +192,9 @@ function getMapping(reverse = false) {
 function saveCipherToFile() {
   const map = getMapping(false);
   const blob = new Blob([JSON.stringify(map, null, 2)], { type: 'application/json' });
-
   let filename = prompt("Enter a name for your cipher file:", "cipher.json");
   if (!filename) return;
   if (!filename.toLowerCase().endsWith('.json')) filename += '.json';
-
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = filename;
@@ -256,9 +255,10 @@ function copyToClipboard() {
   navigator.clipboard.writeText(textBox.value);
 }
 
+// 💡 Auto-resize both when typing & deleting
 function autoResize() {
-  textBox.style.height = 'auto';
-  textBox.style.height = textBox.scrollHeight + 'px';
+  textBox.style.height = 'auto'; // reset height
+  textBox.style.height = textBox.scrollHeight + 'px'; // set to new height
 }
 
 function toggleCipherMode() {
@@ -272,6 +272,7 @@ function toggleCipherMode() {
   }
 }
 
+// Cipher typing
 textBox.addEventListener('beforeinput', function(e) {
   if (!cipherMode) return;
   if (e.inputType === 'insertText' && e.data) {
@@ -285,8 +286,12 @@ textBox.addEventListener('beforeinput', function(e) {
     this.value = text.slice(0, start) + cipherChar + text.slice(end);
     this.selectionStart = this.selectionEnd = start + cipherChar.length;
     e.preventDefault();
+    autoResize();
   }
 });
+
+// Auto expand and shrink dynamically while typing, pasting, deleting
+textBox.addEventListener('input', autoResize);
 
 document.getElementById('encodeBtn').addEventListener('click', () => transformSelection(false));
 document.getElementById('decodeBtn').addEventListener('click', () => transformSelection(true));
