@@ -16,8 +16,6 @@
   }
   h1 { text-align:center; margin-bottom:30px; font-size:2.4em; }
   p { text-align:center; font-size:1.2em; margin-bottom:25px; }
-
-  /* Bigger text box */
   #textBox {
     display:block;
     width:90%;
@@ -34,7 +32,6 @@
     overflow:hidden;
     box-shadow:0 4px 8px rgba(0,0,0,0.05);
   }
-
   #gridContainer {
     margin-bottom:30px;
     padding:20px;
@@ -44,13 +41,11 @@
     box-shadow:0 3px 6px rgba(0,0,0,0.05);
     overflow:hidden;
   }
-
   .grid {
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(120px,1fr));
     gap:16px 14px;
   }
-
   .pair {
     display:flex;
     align-items:center;
@@ -61,14 +56,12 @@
     font-size:28px;
     box-shadow:0 2px 4px rgba(0,0,0,0.08);
   }
-
   .pair span {
     font-weight:bold;
     font-size:28px;
     width:40px;
     text-align:center;
   }
-
   .pair input {
     width:100%;
     max-width:120px;
@@ -81,13 +74,11 @@
     padding:5px;
     box-sizing:border-box;
   }
-
   .pair input:focus {
     border-color:#4CAF50;
     box-shadow:0 0 8px rgba(76,175,80,0.5);
     outline:none;
   }
-
   button {
     background:#4CAF50;
     color:white;
@@ -99,22 +90,16 @@
     margin:10px;
     transition: background 0.2s;
   }
-
   button:hover { background:#45a049; }
   .buttons { text-align:center; margin-top:20px; margin-bottom:30px; flex-wrap:wrap; }
-
   #resetBtn { background:#2196F3; }
   #resetBtn:hover { background:#1c85d8; }
-
   #copyBtn { background:#FF9800; }
   #copyBtn:hover { background:#e68900; }
-
   #saveFileBtn { background:#9C27B0; }
   #saveFileBtn:hover { background:#7b1fa2; }
-
   #loadFileBtn { background:#FF5722; }
   #loadFileBtn:hover { background:#e64a19; }
-
   #toggleModeBtn { background:#607D8B; }
   #toggleModeBtn.active { background:#009688; }
 </style>
@@ -155,7 +140,7 @@ const fileInput = document.getElementById('fileInput');
 const toggleBtn = document.getElementById('toggleModeBtn');
 let cipherMode = false;
 
-// Default cipher mapping
+// Default mapping
 const defaultMapping = {
   A: '☉', B: '●', C: '☾', D: '☽', E: '○', F: '☿', G: '♀', H: '♁',
   I: '♂', J: '♃', K: '♄', L: '♅', M: '♆', N: '♇', O: '♈︎', P: '♉︎',
@@ -186,13 +171,21 @@ function getMapping(reverse = false) {
   return map;
 }
 
+// ✅ Clean Firefox-compatible save (with default "cipher.json")
 function saveCipherToFile() {
   const map = getMapping(false);
   const blob = new Blob([JSON.stringify(map, null, 2)], { type: 'application/json' });
+
+  let filename = prompt("Enter a name for your cipher file:", "cipher.json");
+  if (!filename) return;
+  if (!filename.toLowerCase().endsWith('.json')) filename += '.json';
+
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'cipher.json';
+  a.download = filename;
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
 }
 
@@ -207,21 +200,16 @@ function loadCipherFromFile(file) {
   reader.readAsText(file);
 }
 
-// 🔄 Encode/Decode function (supports selection)
 function transformSelection(reverse = false) {
   const map = getMapping(reverse);
   const start = textBox.selectionStart;
   const end = textBox.selectionEnd;
   let input = textBox.value;
-
-  // If text is selected, only transform that portion
   const hasSelection = start !== end;
   const targetText = hasSelection ? input.slice(start, end) : input;
-
   let result = '';
 
   if (reverse) {
-    // Decode
     const symbols = Object.keys(map).sort((a, b) => b.length - a.length);
     let temp = targetText;
     while (temp.length > 0) {
@@ -230,14 +218,12 @@ function transformSelection(reverse = false) {
       else { result += temp[0]; temp = temp.slice(1); }
     }
   } else {
-    // Encode
     for (const char of targetText) {
       const upper = char.toUpperCase();
       result += alphabet.includes(upper) ? (map[upper] || upper) : char;
     }
   }
 
-  // Replace selection or full text
   if (hasSelection) {
     const before = input.slice(0, start);
     const after = input.slice(end);
@@ -247,13 +233,11 @@ function transformSelection(reverse = false) {
   } else {
     textBox.value = result.toLowerCase();
   }
-
   autoResize();
 }
 
 function copyToClipboard() {
   navigator.clipboard.writeText(textBox.value);
-  alert("Copied to clipboard!");
 }
 
 function autoResize() {
@@ -261,7 +245,6 @@ function autoResize() {
   textBox.style.height = textBox.scrollHeight + 'px';
 }
 
-// --- Toggle Mode ---
 function toggleCipherMode() {
   cipherMode = !cipherMode;
   if (cipherMode) {
@@ -273,7 +256,6 @@ function toggleCipherMode() {
   }
 }
 
-// --- Cipher Typing ---
 textBox.addEventListener('beforeinput', function(e) {
   if (!cipherMode) return;
   if (e.inputType === 'insertText' && e.data) {
@@ -290,7 +272,7 @@ textBox.addEventListener('beforeinput', function(e) {
   }
 });
 
-// Event Listeners
+// Event listeners
 document.getElementById('encodeBtn').addEventListener('click', () => transformSelection(false));
 document.getElementById('decodeBtn').addEventListener('click', () => transformSelection(true));
 document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
