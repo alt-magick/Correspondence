@@ -21,7 +21,6 @@
     font-size:2.4em; 
   }
 
-  /* Responsive link at the top */
   p a {
     display: block;
     width: 100%;
@@ -64,13 +63,13 @@
 
   .grid {
     display:flex;
-    flex-direction:column; /* stack vertically */
+    flex-direction:column;
     gap:10px;
   }
 
   .pair {
     display:flex;
-    flex-direction:column; /* input on its own line */
+    flex-direction:column;
     align-items:flex-start;
     background:#fff;
     padding:16px 12px;
@@ -87,9 +86,9 @@
 
   .pair input {
     width:100%;
-    font-size:1.5em;      /* larger font */
+    font-size:1.5em;
     min-height:60px;
-    text-align:left;    /* left-aligned */
+    text-align:left;
     border:1px solid #bbb;
     border-radius:8px;
     background:#fdfdfd;
@@ -160,22 +159,22 @@
 </div>
 
 <div class="buttons">
-  <button id="resetBtn">ðŸ” Reset to Default</button>
-  <button id="saveFileBtn">ðŸ’¾ Save Cipher to File</button>
-  <button id="loadFileBtn">ðŸ“‚ Load Cipher from File</button>
+  <button id="resetBtn">🔁 Reset to Default</button>
+  <button id="saveFileBtn">💾 Save Cipher to File</button>
+  <button id="loadFileBtn">📂 Load Cipher from File</button>
   <input type="file" id="fileInput" style="display:none;" accept=".json">
 </div>
 
 <div class="buttons">
-  <button id="toggleModeBtn">ðŸ–Šï¸ Mode: Normal Text</button>
+  <button id="toggleModeBtn">🖊️ Mode: Normal Text</button>
 </div>
 
 <textarea id="textBox" autocomplete="off"></textarea>
 
 <div class="buttons">
-  <button id="encodeBtn">ðŸ”’ Encode (Ctrl+E)</button>
-  <button id="decodeBtn">ðŸ”“ Decode (Ctrl+D)</button>
-  <button id="copyBtn">ðŸ“‹ Copy (Ctrl+C)</button>
+  <button id="encodeBtn">🔒 Encode (Ctrl+E)</button>
+  <button id="decodeBtn">🔓 Decode (Ctrl+D)</button>
+  <button id="copyBtn">📋 Copy (Ctrl+C)</button>
 </div>
 
 <script>
@@ -187,10 +186,10 @@ const toggleBtn = document.getElementById('toggleModeBtn');
 let cipherMode = false;
 
 const defaultMapping = {
-  A: 'â˜‰', B: 'â—', C: 'â˜¾', D: 'â˜½', E: 'â—‹', F: 'â˜¿', G: 'â™€', H: 'â™',
-  I: 'â™‚', J: 'â™ƒ', K: 'â™„', L: 'â™…', M: 'â™†', N: 'â™‡', O: 'â™ˆï¸Ž', P: 'â™‰ï¸Ž',
-  Q: 'â™Šï¸Ž', R: 'â™‹ï¸Ž', S: 'â™Œï¸Ž', T: 'â™ï¸Ž', U: 'â™Žï¸Ž', V: 'â™ï¸Ž', W: 'â™ï¸Ž',
-  X: 'â™‘ï¸Ž', Y: 'â™’ï¸Ž', Z: 'â™“ï¸Ž'
+  A: '☉', B: '●', C: '☾', D: '☽', E: '○', F: '☿', G: '♀', H: '♁',
+  I: '♂', J: '♃', K: '♄', L: '♅', M: '♆', N: '♇', O: '♈︎', P: '♉︎',
+  Q: '♊︎', R: '♋︎', S: '♌︎', T: '♍︎', U: '♎︎', V: '♏︎', W: '♐︎',
+  X: '♑︎', Y: '♒︎', Z: '♓︎'
 };
 
 // Create mapping inputs
@@ -207,10 +206,11 @@ function loadMapping(map = defaultMapping) {
   });
 }
 
+// Updated: preserve spaces in input values
 function getMapping(reverse=false) {
   const map = {};
   alphabet.forEach(letter => {
-    const val = document.getElementById(`map_${letter}`).value.trim();
+    const val = document.getElementById(`map_${letter}`).value; // removed .trim()
     if (val) reverse ? map[val] = letter : map[letter] = val;
   });
   return map;
@@ -276,7 +276,7 @@ function copyToClipboard() {
     .then(() => {
       const btn = document.getElementById('copyBtn');
       const old = btn.textContent;
-      btn.textContent = 'âœ… Copied!';
+      btn.textContent = '✅ Copied!';
       setTimeout(() => btn.textContent = old, 1000);
     })
     .catch(err => console.error('Clipboard copy failed:', err));
@@ -286,11 +286,11 @@ function toggleCipherMode() {
   cipherMode = !cipherMode;
   if(cipherMode){
     toggleBtn.classList.add('active');
-    toggleBtn.textContent="ðŸ–Šï¸ Mode: Cipher Typing";
+    toggleBtn.textContent="🖊️ Mode: Cipher Typing";
     textBox.setAttribute('autocomplete','off');
   } else {
     toggleBtn.classList.remove('active');
-    toggleBtn.textContent="ðŸ–Šï¸ Mode: Normal Text";
+    toggleBtn.textContent="🖊️ Mode: Normal Text";
     textBox.setAttribute('autocomplete','on');
   }
 }
@@ -314,7 +314,6 @@ document.getElementById('encodeBtn').addEventListener('click', () => {
   const start = textBox.selectionStart;
   const end = textBox.selectionEnd;
   const text = textBox.value;
-
   if (start !== end) {
     const selected = text.slice(start, end);
     const transformed = transformText(selected, false);
@@ -324,7 +323,6 @@ document.getElementById('encodeBtn').addEventListener('click', () => {
   } else {
     textBox.value = transformText(text, false);
   }
-
   autoResize();
 });
 
@@ -332,7 +330,6 @@ document.getElementById('decodeBtn').addEventListener('click', () => {
   const start = textBox.selectionStart;
   const end = textBox.selectionEnd;
   const text = textBox.value;
-
   if (start !== end) {
     const selected = text.slice(start, end);
     const transformed = transformText(selected, true);
@@ -342,25 +339,15 @@ document.getElementById('decodeBtn').addEventListener('click', () => {
   } else {
     textBox.value = transformText(text, true);
   }
-
   autoResize();
 });
 
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && !e.shiftKey && !e.altKey) {
     const key = e.key.toLowerCase();
-    if (key === 'e') {
-      e.preventDefault();
-      document.getElementById('encodeBtn').click();
-    }
-    if (key === 'd') {
-      e.preventDefault();
-      document.getElementById('decodeBtn').click();
-    }
-    if (key === 'c') {
-      e.preventDefault();
-      copyToClipboard();
-    }
+    if (key === 'e') { e.preventDefault(); document.getElementById('encodeBtn').click(); }
+    if (key === 'd') { e.preventDefault(); document.getElementById('decodeBtn').click(); }
+    if (key === 'c') { e.preventDefault(); copyToClipboard(); }
   }
 });
 
