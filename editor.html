@@ -23,10 +23,10 @@
 
   /* Responsive link at the top */
   p a {
-    display: block;               /* Full-width */
+    display: block;
     width: 100%;
-    word-wrap: break-word;        /* Wrap long URLs */
-    font-size: clamp(1em, 4vw, 1.5em); /* Responsive font size */
+    word-wrap: break-word;
+    font-size: clamp(1em, 4vw, 1.5em);
     text-align: center;
     text-decoration: none;
     color: #1a0dab;
@@ -41,7 +41,7 @@
     padding:30px;
     border:2px solid #aaa;
     border-radius:12px;
-    font-size:4em;
+    font-size:3em;
     line-height:1.4em;
     min-height:260px;
     resize:none;
@@ -63,15 +63,15 @@
   }
 
   .grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(120px,1fr));
-    gap:16px 14px;
+    display:flex;
+    flex-direction:column; /* stack vertically */
+    gap:10px;
   }
 
   .pair {
     display:flex;
-    align-items:center;
-    justify-content:space-between;
+    flex-direction:column; /* input on its own line */
+    align-items:flex-start;
     background:#fff;
     padding:16px 12px;
     border-radius:10px;
@@ -82,16 +82,14 @@
   .pair span {
     font-weight:bold;
     font-size:28px;
-    width:40px;
-    text-align:center;
+    margin-bottom:8px;
   }
 
   .pair input {
     width:100%;
-    max-width:120px;
-    height:70px;
-    font-size:2em;
-    text-align:center;
+    font-size:1.5em;      /* larger font */
+    min-height:60px;
+    text-align:left;    /* left-aligned */
     border:1px solid #bbb;
     border-radius:8px;
     background:#fdfdfd;
@@ -135,7 +133,6 @@
   #toggleModeBtn { background:#607D8B; }
   #toggleModeBtn.active { background:#009688; }
 
-  /* Shortcuts styling - centered using flex */
   .shortcuts-wrapper {
     display: flex;
     justify-content: center;
@@ -163,35 +160,25 @@
 </div>
 
 <div class="buttons">
-  <button id="resetBtn">🔁 Reset to Default</button>
-  <button id="saveFileBtn">💾 Save Cipher to File</button>
-  <button id="loadFileBtn">📂 Load Cipher from File</button>
+  <button id="resetBtn">ðŸ” Reset to Default</button>
+  <button id="saveFileBtn">ðŸ’¾ Save Cipher to File</button>
+  <button id="loadFileBtn">ðŸ“‚ Load Cipher from File</button>
   <input type="file" id="fileInput" style="display:none;" accept=".json">
 </div>
 
 <div class="buttons">
-  <button id="toggleModeBtn">🖊️ Mode: Normal Text</button>
+  <button id="toggleModeBtn">ðŸ–Šï¸ Mode: Normal Text</button>
 </div>
 
 <textarea id="textBox" autocomplete="off"></textarea>
 
 <div class="buttons">
-  <button id="encodeBtn">🔒 Encode (Ctrl+E)</button>
-  <button id="decodeBtn">🔓 Decode (Ctrl+D)</button>
-  <button id="copyBtn">📋 Copy (Ctrl+C)</button>
-</div>
-
-<div class="shortcuts-wrapper">
-  <div class="shortcuts">
-    <strong>Keyboard Shortcuts:</strong><br>
-    🖋️ <b>Ctrl + E</b> → Encode selected text<br>
-    🔓 <b>Ctrl + D</b> → Decode selected text<br>
-    📋 <b>Ctrl + C</b> → Copy selected text
-  </div>
+  <button id="encodeBtn">ðŸ”’ Encode (Ctrl+E)</button>
+  <button id="decodeBtn">ðŸ”“ Decode (Ctrl+D)</button>
+  <button id="copyBtn">ðŸ“‹ Copy (Ctrl+C)</button>
 </div>
 
 <script>
-// All your existing JavaScript code remains unchanged
 const grid = document.getElementById('mappingGrid');
 const textBox = document.getElementById('textBox');
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -200,16 +187,17 @@ const toggleBtn = document.getElementById('toggleModeBtn');
 let cipherMode = false;
 
 const defaultMapping = {
-  A: '☉', B: '●', C: '☾', D: '☽', E: '○', F: '☿', G: '♀', H: '♁',
-  I: '♂', J: '♃', K: '♄', L: '♅', M: '♆', N: '♇', O: '♈︎', P: '♉︎',
-  Q: '♊︎', R: '♋︎', S: '♌︎', T: '♍︎', U: '♎︎', V: '♏︎', W: '♐︎',
-  X: '♑︎', Y: '♒︎', Z: '♓︎'
+  A: 'â˜‰', B: 'â—', C: 'â˜¾', D: 'â˜½', E: 'â—‹', F: 'â˜¿', G: 'â™€', H: 'â™',
+  I: 'â™‚', J: 'â™ƒ', K: 'â™„', L: 'â™…', M: 'â™†', N: 'â™‡', O: 'â™ˆï¸Ž', P: 'â™‰ï¸Ž',
+  Q: 'â™Šï¸Ž', R: 'â™‹ï¸Ž', S: 'â™Œï¸Ž', T: 'â™ï¸Ž', U: 'â™Žï¸Ž', V: 'â™ï¸Ž', W: 'â™ï¸Ž',
+  X: 'â™‘ï¸Ž', Y: 'â™’ï¸Ž', Z: 'â™“ï¸Ž'
 };
 
+// Create mapping inputs
 alphabet.forEach(letter => {
   const div = document.createElement('div');
   div.classList.add('pair');
-  div.innerHTML = `<span>${letter}</span><input type="text" maxlength="3" id="map_${letter}" placeholder="?">`;
+  div.innerHTML = `<span>${letter}</span><input type="text" id="map_${letter}" placeholder="?">`;
   grid.appendChild(div);
 });
 
@@ -288,7 +276,7 @@ function copyToClipboard() {
     .then(() => {
       const btn = document.getElementById('copyBtn');
       const old = btn.textContent;
-      btn.textContent = '✅ Copied!';
+      btn.textContent = 'âœ… Copied!';
       setTimeout(() => btn.textContent = old, 1000);
     })
     .catch(err => console.error('Clipboard copy failed:', err));
@@ -298,11 +286,11 @@ function toggleCipherMode() {
   cipherMode = !cipherMode;
   if(cipherMode){
     toggleBtn.classList.add('active');
-    toggleBtn.textContent="🖊️ Mode: Cipher Typing";
+    toggleBtn.textContent="ðŸ–Šï¸ Mode: Cipher Typing";
     textBox.setAttribute('autocomplete','off');
   } else {
     toggleBtn.classList.remove('active');
-    toggleBtn.textContent="🖊️ Mode: Normal Text";
+    toggleBtn.textContent="ðŸ–Šï¸ Mode: Normal Text";
     textBox.setAttribute('autocomplete','on');
   }
 }
