@@ -44,9 +44,9 @@ https://github.com/djehutyy/Correspondence
 
 There is a live web version at <br>
 
-https://diskdash.com/cipher.html
+https://diskdash.com/psypher
 
-The source is in editor.html
+The source is in psypher.html
 
 <br>
 
