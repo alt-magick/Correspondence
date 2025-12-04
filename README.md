@@ -42,9 +42,7 @@ A new version of this program is available for Linux and Python, as a fork of th
 
 https://github.com/djehutyy/Correspondence
 
-There is a live web version at <br>
-
-https://diskdash.com/psypher
+There is a web version as well<br>
 
 The source is in psypher.html
 
