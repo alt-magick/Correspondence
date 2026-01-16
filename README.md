@@ -45,7 +45,7 @@ https://github.com/djehutyy/Correspondence
 There is also a web version,<br>
 The source is in psypher.html<br>
 
-And live at: https://alt-magick.github.io/Correspondence/psypher.html
+And live at:<br> https://alt-magick.github.io/Correspondence/psypher.html
 
 <br>
 
