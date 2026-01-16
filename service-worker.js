@@ -1,6 +1,6 @@
 const CACHE_NAME = "psypher-cache-v1";
 const FILES_TO_CACHE = [
-  "/Correspondence/psypher.html",
+  "/Correspondence/sigilgen.html",
   "/Correspondence/manifest.json",
   "/Correspondence/service-worker.js"
 ];
