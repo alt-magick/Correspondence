@@ -49,6 +49,7 @@
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
       transition: height 0.1s ease-out;
+      color: #000; /* force black text */
     }
 
     #gridContainer {
@@ -82,6 +83,8 @@
       font-weight: bold;
       font-size: 28px;
       margin-bottom: 8px;
+      color: #000; /* force black text */
+      font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
     }
 
     .pair input {
@@ -94,6 +97,8 @@
       background: #fdfdfd;
       padding: 5px;
       box-sizing: border-box;
+      color: #000; /* force black input text */
+      font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
     }
 
     .pair input:focus {
@@ -198,10 +203,11 @@
     const toggleBtn = document.getElementById('toggleModeBtn');
     let cipherMode = false;
 
+    // Default mapping with plain black zodiac symbols using variation selector (U+FE0E)
     const defaultMapping = {
       A: '☉', B: '●', C: '☾', D: '☽', E: '○', F: '☿', G: '♀', H: '♁', I: '♂', J: '♃',
-      K: '♄', L: '♅', M: '♆', N: '♇', O: '♈', P: '♉', Q: '♊', R: '♋', S: '♌', T: '♍',
-      U: '♎', V: '♏', W: '♐', X: '♑', Y: '♒', Z: '♓'
+      K: '♄', L: '♅', M: '♆', N: '♇', O: '♈︎', P: '♉︎', Q: '♊︎', R: '♋︎', S: '♌︎', T: '♍︎',
+      U: '♎︎', V: '♏︎', W: '♐︎', X: '♑︎', Y: '♒︎', Z: '♓︎'
     };
 
     // Create mapping inputs
