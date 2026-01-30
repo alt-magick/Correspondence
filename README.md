@@ -44,8 +44,7 @@ https://github.com/djehutyy/Correspondence
 
 The file psypher.apk will also run on Android.
 
-There is a web version,<br>
-The source is in psypher.html<br>
+There source for the weeb version is in psypher.html<br>
 
 And live at:<br> https://alt-magick.github.io/Correspondence/psypher.html
 
