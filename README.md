@@ -42,9 +42,9 @@ A new version of this program is available for Linux and Python, as a fork of th
 
 https://github.com/djehutyy/Correspondence
 
-The file psypher.apk will also run on Android.
+The file psypher.apk will run on Android.
 
-There source for the weeb version is in psypher.html<br>
+There source for the web version is in psypher.html<br>
 
 And live at:<br> https://alt-magick.github.io/Correspondence/psypher.html
 
