@@ -47,6 +47,8 @@ The source is in psypher.html<br>
 
 And live at:<br> https://alt-magick.github.io/Correspondence/psypher.html
 
+psypher.apk will run on Android.
+
 <br>
 
 # Chaos Magick
