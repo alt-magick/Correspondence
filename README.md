@@ -42,12 +42,12 @@ A new version of this program is available for Linux and Python, as a fork of th
 
 https://github.com/djehutyy/Correspondence
 
+psypher.apk will run on Android.
+
 There is also a web version,<br>
 The source is in psypher.html<br>
 
 And live at:<br> https://alt-magick.github.io/Correspondence/psypher.html
-
-psypher.apk will run on Android.
 
 <br>
 
