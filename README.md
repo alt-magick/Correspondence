@@ -61,10 +61,6 @@ Valued for simplicity, flexibility, and perceived effectiveness, sigil magic rem
 
 Moving into the 21st century, chaos magicians have begun using digital tools like computers, smartphones, and the internet for spellcasting and reality manipulation. This includes coding sigils into software, crafting magical algorithms, and using social media for large-scale magical workings.
 
-Meme magic leverages internet memes to amplify magical intent through their viral nature. Advances in artificial intelligence prompt experiments with AI-generated sigils and machine learning to optimize magical practices, even creating AI entities as magical servitors.
-
-Augmented and virtual reality technologies expand chaos magical frontiers, enabling creation of magical spaces in virtual environments and overlaying AR symbols onto the physical universe.
-
 The concept of the "noosphere" a hypothetical sphere of human thought encircling the earth, has been revived and reinterpreted by some chaos magicians. They view the global information network as a manifestation of this noosphere and attempt to perform magical workings that ripple through this collective field of human consciousness.
 
 Developed as a versatile text editor, my tool called "Correspondence" offers users the ability to seamlessly toggle between Sigil magick and standard text input. Through its ability to encode and decode text using an astrology cipher, it adds a layer of mysticism and intention to the act of editing text.
