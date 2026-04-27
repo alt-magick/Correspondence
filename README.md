@@ -37,6 +37,8 @@ Y / Aquarius: ♒︎<br>
 Z / Pisces: ♓︎<br>
 <br>
 
+Highlight text to encode and decode. Or encode or decode what's in the clipboard as a paste.<br>
+
 A new version of this program is available for Linux and Python, as a fork of this project:
 <br>
 
