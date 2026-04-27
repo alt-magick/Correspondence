@@ -52,6 +52,12 @@ void OpenFile(HWND hwnd);
 void EncodeText();
 void DecodeText();
 
+bool HasSelection(HWND hEdit, DWORD& start, DWORD& end)
+{
+    SendMessageW(hEdit, EM_GETSEL, (WPARAM)&start, (LPARAM)&end);
+    return start != end;
+}
+
 void SaveCurrentStateForUndo() {
     std::wstring currentState;
     int length = GetWindowTextLengthW(hEdit) + 1;
@@ -163,111 +169,105 @@ void OpenFile(HWND hwnd) {
         CloseHandle(hFile);
     }
 }
-
 void EncodeText() {
-    int len = GetWindowTextLengthW(hEdit);
-    if (len > 0) {
-        WCHAR* buffer = new WCHAR[len + 1];
-        GetWindowTextW(hEdit, buffer, len + 1);
-
-        for (int i = 0; i < len; ++i) {
-            WCHAR originalChar = buffer[i];
-            WCHAR newChar = originalChar;
-
-            switch (originalChar) {
-            case L'A': case L'a': newChar = L'☉'; break;
-            case L'B': case L'b': newChar = L'●'; break;
-            case L'C': case L'c': newChar = L'☾'; break;
-            case L'D': case L'd': newChar = L'☽'; break;
-            case L'E': case L'e': newChar = L'○'; break;
-            case L'F': case L'f': newChar = L'☿'; break;
-            case L'G': case L'g': newChar = L'♀'; break;
-            case L'H': case L'h': newChar = L'♁'; break;
-            case L'I': case L'i': newChar = L'♂'; break;
-            case L'J': case L'j': newChar = L'♃'; break;
-            case L'K': case L'k': newChar = L'♄'; break;
-            case L'L': case L'l': newChar = L'♅'; break;
-            case L'M': case L'm': newChar = L'♆'; break;
-            case L'N': case L'n': newChar = L'♇'; break;
-            case L'O': case L'o': newChar = L'♈'; break;
-            case L'P': case L'p': newChar = L'♉'; break;
-            case L'Q': case L'q': newChar = L'♊'; break;
-            case L'R': case L'r': newChar = L'♋'; break;
-            case L'S': case L's': newChar = L'♌'; break;
-            case L'T': case L't': newChar = L'♍'; break;
-            case L'U': case L'u': newChar = L'♎'; break;
-            case L'V': case L'v': newChar = L'♏'; break;
-            case L'W': case L'w': newChar = L'♐'; break;
-            case L'X': case L'x': newChar = L'♑'; break;
-            case L'Y': case L'y': newChar = L'♒'; break;
-            case L'Z': case L'z': newChar = L'♓'; break;
-            default:
-                newChar = originalChar;
-                break;
-            }
-
-            buffer[i] = newChar;
-        }
-
-        SetWindowTextW(hEdit, buffer);
-        delete[] buffer;
+    DWORD start = 0, end = 0;
+    if (!HasSelection(hEdit, start, end)) {
+        MessageBoxW(NULL, L"No text selected.", L"Encode", MB_OK | MB_ICONINFORMATION);
+        return;
     }
+
+    int len = end - start;
+
+    WCHAR* buffer = new WCHAR[len + 1];
+    GetWindowTextW(hEdit, buffer, len + 1);
+    buffer[len] = L'\0';
+
+    for (int i = 0; i < len; ++i) {
+        switch (buffer[i]) {
+        case L'A': case L'a': buffer[i] = L'☉'; break;
+        case L'B': case L'b': buffer[i] = L'●'; break;
+        case L'C': case L'c': buffer[i] = L'☾'; break;
+        case L'D': case L'd': buffer[i] = L'☽'; break;
+        case L'E': case L'e': buffer[i] = L'○'; break;
+        case L'F': case L'f': buffer[i] = L'☿'; break;
+        case L'G': case L'g': buffer[i] = L'♀'; break;
+        case L'H': case L'h': buffer[i] = L'♁'; break;
+        case L'I': case L'i': buffer[i] = L'♂'; break;
+        case L'J': case L'j': buffer[i] = L'♃'; break;
+        case L'K': case L'k': buffer[i] = L'♄'; break;
+        case L'L': case L'l': buffer[i] = L'♅'; break;
+        case L'M': case L'm': buffer[i] = L'♆'; break;
+        case L'N': case L'n': buffer[i] = L'♇'; break;
+        case L'O': case L'o': buffer[i] = L'♈'; break;
+        case L'P': case L'p': buffer[i] = L'♉'; break;
+        case L'Q': case L'q': buffer[i] = L'♊'; break;
+        case L'R': case L'r': buffer[i] = L'♋'; break;
+        case L'S': case L's': buffer[i] = L'♌'; break;
+        case L'T': case L't': buffer[i] = L'♍'; break;
+        case L'U': case L'u': buffer[i] = L'♎'; break;
+        case L'V': case L'v': buffer[i] = L'♏'; break;
+        case L'W': case L'w': buffer[i] = L'♐'; break;
+        case L'X': case L'x': buffer[i] = L'♑'; break;
+        case L'Y': case L'y': buffer[i] = L'♒'; break;
+        case L'Z': case L'z': buffer[i] = L'♓'; break;
+        }
+    }
+
+    SetWindowTextW(hEdit, buffer);
+    delete[] buffer;
 
     UpdateStatusBar();
 }
 
 void DecodeText() {
-    int len = GetWindowTextLengthW(hEdit);
-    if (len > 0) {
-        WCHAR* buffer = new WCHAR[len + 1];
-        GetWindowTextW(hEdit, buffer, len + 1);
-
-        for (int i = 0; i < len; ++i) {
-            WCHAR originalChar = buffer[i];
-            WCHAR newChar = originalChar;
-
-            switch (originalChar) {
-            case L'☉': newChar = L'a'; break;
-            case L'●': newChar = L'b'; break;
-            case L'☾': newChar = L'c'; break;
-            case L'☽': newChar = L'd'; break;
-            case L'○': newChar = L'e'; break;
-            case L'☿': newChar = L'f'; break;
-            case L'♀': newChar = L'g'; break;
-            case L'♁': newChar = L'h'; break;
-            case L'♂': newChar = L'i'; break;
-            case L'♃': newChar = L'j'; break;
-            case L'♄': newChar = L'k'; break;
-            case L'♅': newChar = L'l'; break;
-            case L'♆': newChar = L'm'; break;
-            case L'♇': newChar = L'n'; break;
-            case L'♈': newChar = L'o'; break;
-            case L'♉': newChar = L'p'; break;
-            case L'♊': newChar = L'q'; break;
-            case L'♋': newChar = L'r'; break;
-            case L'♌': newChar = L's'; break;
-            case L'♍': newChar = L't'; break;
-            case L'♎': newChar = L'u'; break;
-            case L'♏': newChar = L'v'; break;
-            case L'♐': newChar = L'w'; break;
-            case L'♑': newChar = L'x'; break;
-            case L'♒': newChar = L'y'; break;
-            case L'♓': newChar = L'z'; break;
-            default:
-                newChar = originalChar;
-                break;
-            }
-
-            buffer[i] = newChar;
-        }
-
-        SetWindowTextW(hEdit, buffer);
-        delete[] buffer;
+    DWORD start = 0, end = 0;
+    if (!HasSelection(hEdit, start, end)) {
+        MessageBoxW(NULL, L"No text selected.", L"Decode", MB_OK | MB_ICONINFORMATION);
+        return;
     }
+
+    int len = end - start;
+
+    WCHAR* buffer = new WCHAR[len + 1];
+    GetWindowTextW(hEdit, buffer, len + 1);
+    buffer[len] = L'\0';
+
+    for (int i = 0; i < len; ++i) {
+        switch (buffer[i]) {
+        case L'☉': buffer[i] = L'a'; break;
+        case L'●': buffer[i] = L'b'; break;
+        case L'☾': buffer[i] = L'c'; break;
+        case L'☽': buffer[i] = L'd'; break;
+        case L'○': buffer[i] = L'e'; break;
+        case L'☿': buffer[i] = L'f'; break;
+        case L'♀': buffer[i] = L'g'; break;
+        case L'♁': buffer[i] = L'h'; break;
+        case L'♂': buffer[i] = L'i'; break;
+        case L'♃': buffer[i] = L'j'; break;
+        case L'♄': buffer[i] = L'k'; break;
+        case L'♅': buffer[i] = L'l'; break;
+        case L'♆': buffer[i] = L'm'; break;
+        case L'♇': buffer[i] = L'n'; break;
+        case L'♈': buffer[i] = L'o'; break;
+        case L'♉': buffer[i] = L'p'; break;
+        case L'♊': buffer[i] = L'q'; break;
+        case L'♋': buffer[i] = L'r'; break;
+        case L'♌': buffer[i] = L's'; break;
+        case L'♍': buffer[i] = L't'; break;
+        case L'♎': buffer[i] = L'u'; break;
+        case L'♏': buffer[i] = L'v'; break;
+        case L'♐': buffer[i] = L'w'; break;
+        case L'♑': buffer[i] = L'x'; break;
+        case L'♒': buffer[i] = L'y'; break;
+        case L'♓': buffer[i] = L'z'; break;
+        }
+    }
+
+    SetWindowTextW(hEdit, buffer);
+    delete[] buffer;
 
     UpdateStatusBar();
 }
-
 void Undo() {
     if (!undoStack.empty()) {
         std::wstring currentState;
@@ -454,259 +454,26 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             enableSubstitution = !enableSubstitution;
             UpdateStatusBar();
             break;
-        case ID_CODE_ENCODE:
-            SaveCurrentStateForUndo();
-            SendMessageW(hEdit, WM_CUT, 0, 0);
-            if (OpenClipboard(hwnd)) {
-                HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
-                if (hClipboardData != NULL) {
-                    WCHAR* pszData = static_cast<WCHAR*>(GlobalLock(hClipboardData));
-                    if (pszData != NULL) {
 
-                        size_t length = wcslen(pszData);
-                        WCHAR* pszModifiedData = new WCHAR[length + 1];
-                        if (pszModifiedData != NULL) {
-                            for (size_t i = 0; i < length; ++i) {
-                                if (pszData[i] == L'a' || pszData[i] == L'A') {
-                                    pszModifiedData[i] = L'☉';
-                                }
-                                else if (pszData[i] == L'b' || pszData[i] == L'B') {
-                                    pszModifiedData[i] = L'●';
-                                }
-                                else if (pszData[i] == L'c' || pszData[i] == L'C') {
-                                    pszModifiedData[i] = L'☾';
-                                }
-                                else if (pszData[i] == L'd' || pszData[i] == L'D') {
-                                    pszModifiedData[i] = L'☽';
-                                }
-                                else if (pszData[i] == L'e' || pszData[i] == L'E') {
-                                    pszModifiedData[i] = L'○';
-                                }
-                                else if (pszData[i] == L'f' || pszData[i] == L'F') {
-                                    pszModifiedData[i] = L'☿';
-                                }
-                                else if (pszData[i] == L'g' || pszData[i] == L'G') {
-                                    pszModifiedData[i] = L'♀';
-                                }
-                                else if (pszData[i] == L'h' || pszData[i] == L'H') {
-                                    pszModifiedData[i] = L'♁';
-                                }
-                                else if (pszData[i] == L'i' || pszData[i] == L'I') {
-                                    pszModifiedData[i] = L'♂';
-                                }
-                                else if (pszData[i] == L'j' || pszData[i] == L'J') {
-                                    pszModifiedData[i] = L'♃';
-                                }
-                                else if (pszData[i] == L'k' || pszData[i] == L'K') {
-                                    pszModifiedData[i] = L'♄';
-                                }
-                                else if (pszData[i] == L'l' || pszData[i] == L'L') {
-                                    pszModifiedData[i] = L'♅';
-                                }
-                                else if (pszData[i] == L'm' || pszData[i] == L'M') {
-                                    pszModifiedData[i] = L'♆';
-                                }
-                                else if (pszData[i] == L'n' || pszData[i] == L'N') {
-                                    pszModifiedData[i] = L'♇';
-                                }
-                                else if (pszData[i] == L'o' || pszData[i] == L'O') {
-                                    pszModifiedData[i] = L'♈';
-                                }
-                                else if (pszData[i] == L'p' || pszData[i] == L'P') {
-                                    pszModifiedData[i] = L'♉';
-                                }
-                                else if (pszData[i] == L'q' || pszData[i] == L'Q') {
-                                    pszModifiedData[i] = L'♊';
-                                }
-                                else if (pszData[i] == L'r' || pszData[i] == L'R') {
-                                    pszModifiedData[i] = L'♋';
-                                }
-                                else if (pszData[i] == L's' || pszData[i] == L'S') {
-                                    pszModifiedData[i] = L'♌';
-                                }
-                                else if (pszData[i] == L't' || pszData[i] == L'T') {
-                                    pszModifiedData[i] = L'♍';
-                                }
-                                else if (pszData[i] == L'u' || pszData[i] == L'U') {
-                                    pszModifiedData[i] = L'♎';
-                                }
-                                else if (pszData[i] == L'v' || pszData[i] == L'V') {
-                                    pszModifiedData[i] = L'♏';
-                                }
-                                else if (pszData[i] == L'w' || pszData[i] == L'W') {
-                                    pszModifiedData[i] = L'♐';
-                                }
-                                else if (pszData[i] == L'x' || pszData[i] == L'X') {
-                                    pszModifiedData[i] = L'♑';
-                                }
-                                else if (pszData[i] == L'y' || pszData[i] == L'Y') {
-                                    pszModifiedData[i] = L'♒';
-                                }
-                                else if (pszData[i] == L'z' || pszData[i] == L'Z') {
-                                    pszModifiedData[i] = L'♓';
-                                }
-                                else {
-                                    pszModifiedData[i] = pszData[i];
-                                }
-                            }
-                            pszModifiedData[length] = L'\0';
+case ID_CODE_ENCODE: {
+    DWORD start, end;
+    if (!HasSelection(hEdit, start, end)) {
+        MessageBoxW(hwnd, L"Select text first.", L"Encode", MB_OK);
+        break;
+    }
+    EncodeText();
+    break;
+}
 
-
-                            EmptyClipboard();
-
-
-                            HANDLE hNewData = GlobalAlloc(GMEM_MOVEABLE, (length + 1) * sizeof(WCHAR));
-                            if (hNewData != NULL) {
-                                WCHAR* pszNewData = static_cast<WCHAR*>(GlobalLock(hNewData));
-                                if (pszNewData != NULL) {
-                                    wcscpy_s(pszNewData, length + 1, pszModifiedData);
-                                    GlobalUnlock(hNewData);
-
-
-                                    SetClipboardData(CF_UNICODETEXT, hNewData);
-                                }
-                                else {
-                                    GlobalFree(hNewData);
-                                }
-                            }
-
-                            delete[] pszModifiedData;
-                        }
-                        GlobalUnlock(hClipboardData);
-                    }
-                }
-
-                CloseClipboard();
-            }
-            SendMessageW(hEdit, WM_PASTE, 0, 0);
-            break;
-
-        case ID_CODE_DECODE:
-            SaveCurrentStateForUndo();
-            SendMessageW(hEdit, WM_CUT, 0, 0);
-            if (OpenClipboard(hwnd)) {
-                HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT);
-                if (hClipboardData != NULL) {
-                    WCHAR* pszData = static_cast<WCHAR*>(GlobalLock(hClipboardData));
-                    if (pszData != NULL) {
-
-                        size_t length = wcslen(pszData);
-                        WCHAR* pszModifiedData = new WCHAR[length + 1];
-                        if (pszModifiedData != NULL) {
-                            for (size_t i = 0; i < length; ++i) {
-                                if (pszData[i] == L'☉') {
-                                    pszModifiedData[i] = L'a';
-                                }
-                                else if (pszData[i] == L'●') {
-                                    pszModifiedData[i] = L'b';
-                                }
-                                else if (pszData[i] == L'☾') {
-                                    pszModifiedData[i] = L'c';
-                                }
-                                else if (pszData[i] == L'☽') {
-                                    pszModifiedData[i] = L'd';
-                                }
-                                else if (pszData[i] == L'○') {
-                                    pszModifiedData[i] = L'e';
-                                }
-                                else if (pszData[i] == L'☿') {
-                                    pszModifiedData[i] = L'f';
-                                }
-                                else if (pszData[i] == L'♀') {
-                                    pszModifiedData[i] = L'g';
-                                }
-                                else if (pszData[i] == L'♁') {
-                                    pszModifiedData[i] = L'h';
-                                }
-                                else if (pszData[i] == L'♂') {
-                                    pszModifiedData[i] = L'i';
-                                }
-                                else if (pszData[i] == L'♃') {
-                                    pszModifiedData[i] = L'j';
-                                }
-                                else if (pszData[i] == L'♄') {
-                                    pszModifiedData[i] = L'k';
-                                }
-                                else if (pszData[i] == L'♅') {
-                                    pszModifiedData[i] = L'l';
-                                }
-                                else if (pszData[i] == L'♆') {
-                                    pszModifiedData[i] = L'm';
-                                }
-                                else if (pszData[i] == L'♇') {
-                                    pszModifiedData[i] = L'n';
-                                }
-                                else if (pszData[i] == L'♈') {
-                                    pszModifiedData[i] = L'o';
-                                }
-                                else if (pszData[i] == L'♉') {
-                                    pszModifiedData[i] = L'p';
-                                }
-                                else if (pszData[i] == L'♊') {
-                                    pszModifiedData[i] = L'q';
-                                }
-                                else if (pszData[i] == L'♋') {
-                                    pszModifiedData[i] = L'r';
-                                }
-                                else if (pszData[i] == L'♌') {
-                                    pszModifiedData[i] = L's';
-                                }
-                                else if (pszData[i] == L'♍') {
-                                    pszModifiedData[i] = L't';
-                                }
-                                else if (pszData[i] == L'♎') {
-                                    pszModifiedData[i] = L'u';
-                                }
-                                else if (pszData[i] == L'♏') {
-                                    pszModifiedData[i] = L'v';
-                                }
-                                else if (pszData[i] == L'♐') {
-                                    pszModifiedData[i] = L'w';
-                                }
-                                else if (pszData[i] == L'♑') {
-                                    pszModifiedData[i] = L'x';
-                                }
-                                else if (pszData[i] == L'♒') {
-                                    pszModifiedData[i] = L'y';
-                                }
-                                else if (pszData[i] == L'♓') {
-                                    pszModifiedData[i] = L'z';
-                                }
-
-                                else {
-                                    pszModifiedData[i] = pszData[i];
-                                }
-                            }
-                            pszModifiedData[length] = L'\0';
-
-                            EmptyClipboard();
-
-                            HANDLE hNewData = GlobalAlloc(GMEM_MOVEABLE, (length + 1) * sizeof(WCHAR));
-                            if (hNewData != NULL) {
-                                WCHAR* pszNewData = static_cast<WCHAR*>(GlobalLock(hNewData));
-                                if (pszNewData != NULL) {
-                                    wcscpy_s(pszNewData, length + 1, pszModifiedData);
-                                    GlobalUnlock(hNewData);
-
-
-                                    SetClipboardData(CF_UNICODETEXT, hNewData);
-                                }
-                                else {
-                                    GlobalFree(hNewData);
-                                }
-                            }
-
-                            delete[] pszModifiedData;
-                        }
-                        GlobalUnlock(hClipboardData);
-                    }
-                }
-
-                CloseClipboard();
-            }
-            SendMessageW(hEdit, WM_PASTE, 0, 0);
-            break;
-
+case ID_CODE_DECODE: {
+    DWORD start, end;
+    if (!HasSelection(hEdit, start, end)) {
+        MessageBoxW(hwnd, L"Select text first.", L"Decode", MB_OK);
+        break;
+    }
+    DecodeText();
+    break;
+}
         case ID_EDIT_CUT: {
             SendMessageW(hEdit, WM_CUT, 0, 0);
             break;
