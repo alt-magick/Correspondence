@@ -75,6 +75,14 @@ void SelectAllText(HWND hwndEdit) {
     SendMessageW(hwndEdit, EM_SETSEL, 0, textLength);
 }
 
+std::wstring GetAllText(HWND hEdit)
+{
+    int len = GetWindowTextLengthW(hEdit);
+    std::wstring text(len, L'\0');
+    GetWindowTextW(hEdit, &text[0], len + 1);
+    return text;
+}
+
 void UpdateStatusBar() {
     int index = 0;
     const int bufferSize = 256;
@@ -169,105 +177,99 @@ void OpenFile(HWND hwnd) {
         CloseHandle(hFile);
     }
 }
+
 void EncodeText() {
     DWORD start = 0, end = 0;
-    if (!HasSelection(hEdit, start, end)) {
-        MessageBoxW(NULL, L"No text selected.", L"Encode", MB_OK | MB_ICONINFORMATION);
-        return;
+    bool hasSelection = HasSelection(hEdit, start, end);
+
+    std::wstring text = GetAllText(hEdit);
+
+    if (!hasSelection) {
+        start = 0;
+        end = (DWORD)text.size();
     }
 
-    int len = end - start;
-
-    WCHAR* buffer = new WCHAR[len + 1];
-    GetWindowTextW(hEdit, buffer, len + 1);
-    buffer[len] = L'\0';
-
-    for (int i = 0; i < len; ++i) {
-        switch (buffer[i]) {
-        case L'A': case L'a': buffer[i] = L'☉'; break;
-        case L'B': case L'b': buffer[i] = L'●'; break;
-        case L'C': case L'c': buffer[i] = L'☾'; break;
-        case L'D': case L'd': buffer[i] = L'☽'; break;
-        case L'E': case L'e': buffer[i] = L'○'; break;
-        case L'F': case L'f': buffer[i] = L'☿'; break;
-        case L'G': case L'g': buffer[i] = L'♀'; break;
-        case L'H': case L'h': buffer[i] = L'♁'; break;
-        case L'I': case L'i': buffer[i] = L'♂'; break;
-        case L'J': case L'j': buffer[i] = L'♃'; break;
-        case L'K': case L'k': buffer[i] = L'♄'; break;
-        case L'L': case L'l': buffer[i] = L'♅'; break;
-        case L'M': case L'm': buffer[i] = L'♆'; break;
-        case L'N': case L'n': buffer[i] = L'♇'; break;
-        case L'O': case L'o': buffer[i] = L'♈'; break;
-        case L'P': case L'p': buffer[i] = L'♉'; break;
-        case L'Q': case L'q': buffer[i] = L'♊'; break;
-        case L'R': case L'r': buffer[i] = L'♋'; break;
-        case L'S': case L's': buffer[i] = L'♌'; break;
-        case L'T': case L't': buffer[i] = L'♍'; break;
-        case L'U': case L'u': buffer[i] = L'♎'; break;
-        case L'V': case L'v': buffer[i] = L'♏'; break;
-        case L'W': case L'w': buffer[i] = L'♐'; break;
-        case L'X': case L'x': buffer[i] = L'♑'; break;
-        case L'Y': case L'y': buffer[i] = L'♒'; break;
-        case L'Z': case L'z': buffer[i] = L'♓'; break;
+    for (DWORD i = start; i < end; ++i) {
+        switch (text[i]) {
+        case L'A': case L'a': text[i] = L'☉'; break;
+        case L'B': case L'b': text[i] = L'●'; break;
+        case L'C': case L'c': text[i] = L'☾'; break;
+        case L'D': case L'd': text[i] = L'☽'; break;
+        case L'E': case L'e': text[i] = L'○'; break;
+        case L'F': case L'f': text[i] = L'☿'; break;
+        case L'G': case L'g': text[i] = L'♀'; break;
+        case L'H': case L'h': text[i] = L'♁'; break;
+        case L'I': case L'i': text[i] = L'♂'; break;
+        case L'J': case L'j': text[i] = L'♃'; break;
+        case L'K': case L'k': text[i] = L'♄'; break;
+        case L'L': case L'l': text[i] = L'♅'; break;
+        case L'M': case L'm': text[i] = L'♆'; break;
+        case L'N': case L'n': text[i] = L'♇'; break;
+        case L'O': case L'o': text[i] = L'♈'; break;
+        case L'P': case L'p': text[i] = L'♉'; break;
+        case L'Q': case L'q': text[i] = L'♊'; break;
+        case L'R': case L'r': text[i] = L'♋'; break;
+        case L'S': case L's': text[i] = L'♌'; break;
+        case L'T': case L't': text[i] = L'♍'; break;
+        case L'U': case L'u': text[i] = L'♎'; break;
+        case L'V': case L'v': text[i] = L'♏'; break;
+        case L'W': case L'w': text[i] = L'♐'; break;
+        case L'X': case L'x': text[i] = L'♑'; break;
+        case L'Y': case L'y': text[i] = L'♒'; break;
+        case L'Z': case L'z': text[i] = L'♓'; break;
         }
     }
 
-    SetWindowTextW(hEdit, buffer);
-    delete[] buffer;
-
+    SetWindowTextW(hEdit, text.c_str());
     UpdateStatusBar();
 }
 
 void DecodeText() {
     DWORD start = 0, end = 0;
-    if (!HasSelection(hEdit, start, end)) {
-        MessageBoxW(NULL, L"No text selected.", L"Decode", MB_OK | MB_ICONINFORMATION);
-        return;
+    bool hasSelection = HasSelection(hEdit, start, end);
+
+    std::wstring text = GetAllText(hEdit);
+
+    if (!hasSelection) {
+        start = 0;
+        end = (DWORD)text.size();
     }
 
-    int len = end - start;
-
-    WCHAR* buffer = new WCHAR[len + 1];
-    GetWindowTextW(hEdit, buffer, len + 1);
-    buffer[len] = L'\0';
-
-    for (int i = 0; i < len; ++i) {
-        switch (buffer[i]) {
-        case L'☉': buffer[i] = L'a'; break;
-        case L'●': buffer[i] = L'b'; break;
-        case L'☾': buffer[i] = L'c'; break;
-        case L'☽': buffer[i] = L'd'; break;
-        case L'○': buffer[i] = L'e'; break;
-        case L'☿': buffer[i] = L'f'; break;
-        case L'♀': buffer[i] = L'g'; break;
-        case L'♁': buffer[i] = L'h'; break;
-        case L'♂': buffer[i] = L'i'; break;
-        case L'♃': buffer[i] = L'j'; break;
-        case L'♄': buffer[i] = L'k'; break;
-        case L'♅': buffer[i] = L'l'; break;
-        case L'♆': buffer[i] = L'm'; break;
-        case L'♇': buffer[i] = L'n'; break;
-        case L'♈': buffer[i] = L'o'; break;
-        case L'♉': buffer[i] = L'p'; break;
-        case L'♊': buffer[i] = L'q'; break;
-        case L'♋': buffer[i] = L'r'; break;
-        case L'♌': buffer[i] = L's'; break;
-        case L'♍': buffer[i] = L't'; break;
-        case L'♎': buffer[i] = L'u'; break;
-        case L'♏': buffer[i] = L'v'; break;
-        case L'♐': buffer[i] = L'w'; break;
-        case L'♑': buffer[i] = L'x'; break;
-        case L'♒': buffer[i] = L'y'; break;
-        case L'♓': buffer[i] = L'z'; break;
+    for (DWORD i = start; i < end; ++i) {
+        switch (text[i]) {
+        case L'☉': text[i] = L'a'; break;
+        case L'●': text[i] = L'b'; break;
+        case L'☾': text[i] = L'c'; break;
+        case L'☽': text[i] = L'd'; break;
+        case L'○': text[i] = L'e'; break;
+        case L'☿': text[i] = L'f'; break;
+        case L'♀': text[i] = L'g'; break;
+        case L'♁': text[i] = L'h'; break;
+        case L'♂': text[i] = L'i'; break;
+        case L'♃': text[i] = L'j'; break;
+        case L'♄': text[i] = L'k'; break;
+        case L'♅': text[i] = L'l'; break;
+        case L'♆': text[i] = L'm'; break;
+        case L'♇': text[i] = L'n'; break;
+        case L'♈': text[i] = L'o'; break;
+        case L'♉': text[i] = L'p'; break;
+        case L'♊': text[i] = L'q'; break;
+        case L'♋': text[i] = L'r'; break;
+        case L'♌': text[i] = L's'; break;
+        case L'♍': text[i] = L't'; break;
+        case L'♎': text[i] = L'u'; break;
+        case L'♏': text[i] = L'v'; break;
+        case L'♐': text[i] = L'w'; break;
+        case L'♑': text[i] = L'x'; break;
+        case L'♒': text[i] = L'y'; break;
+        case L'♓': text[i] = L'z'; break;
         }
     }
 
-    SetWindowTextW(hEdit, buffer);
-    delete[] buffer;
-
+    SetWindowTextW(hEdit, text.c_str());
     UpdateStatusBar();
 }
+
 void Undo() {
     if (!undoStack.empty()) {
         std::wstring currentState;
@@ -456,21 +458,13 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             break;
 
 case ID_CODE_ENCODE: {
-    DWORD start, end;
-    if (!HasSelection(hEdit, start, end)) {
-        MessageBoxW(hwnd, L"Select text first.", L"Encode", MB_OK);
-        break;
-    }
+
     EncodeText();
     break;
 }
 
 case ID_CODE_DECODE: {
-    DWORD start, end;
-    if (!HasSelection(hEdit, start, end)) {
-        MessageBoxW(hwnd, L"Select text first.", L"Decode", MB_OK);
-        break;
-    }
+
     DecodeText();
     break;
 }
