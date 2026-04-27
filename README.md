@@ -37,7 +37,7 @@ Y / Aquarius: ♒︎<br>
 Z / Pisces: ♓︎<br>
 <br>
 
-Highlight text to encode and decode.<br>
+Highlight text to encode and decode. If nothing is highlighted the whole file will be used.<br>
 
 A new version of this program is available for Linux and Python, as a fork of this project:
 <br>
